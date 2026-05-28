@@ -1,0 +1,25 @@
+[16-Mar-2026 10:41:50 UTC] PHP Fatal error:  Uncaught Error: Class "ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584" not found in /home/twigsouvenir/source/vendor/autoload.php:25
+Stack trace:
+#0 /home/twigsouvenir/public_html/index.php(14): require()
+#1 {main}
+  thrown in /home/twigsouvenir/source/vendor/autoload.php on line 25
+[16-Mar-2026 10:41:52 UTC] PHP Fatal error:  Uncaught Error: Class "ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584" not found in /home/twigsouvenir/source/vendor/autoload.php:25
+Stack trace:
+#0 /home/twigsouvenir/public_html/index.php(14): require()
+#1 {main}
+  thrown in /home/twigsouvenir/source/vendor/autoload.php on line 25
+[16-Mar-2026 10:41:53 UTC] PHP Fatal error:  Uncaught Error: Class "ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584" not found in /home/twigsouvenir/source/vendor/autoload.php:25
+Stack trace:
+#0 /home/twigsouvenir/public_html/index.php(14): require()
+#1 {main}
+  thrown in /home/twigsouvenir/source/vendor/autoload.php on line 25
+[16-Mar-2026 10:41:57 UTC] PHP Fatal error:  Uncaught Error: Class "ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584" not found in /home/twigsouvenir/source/vendor/autoload.php:25
+Stack trace:
+#0 /home/twigsouvenir/public_html/index.php(14): require()
+#1 {main}
+  thrown in /home/twigsouvenir/source/vendor/autoload.php on line 25
+[16-Mar-2026 10:41:59 UTC] PHP Fatal error:  Uncaught Error: Class "ComposerAutoloaderInitc514d8f7b9fc5970bdd94287905ef584" not found in /home/twigsouvenir/source/vendor/autoload.php:25
+Stack trace:
+#0 /home/twigsouvenir/public_html/index.php(14): require()
+#1 {main}
+  thrown in /home/twigsouvenir/source/vendor/autoload.php on line 25

@@ -1,0 +1,24 @@
+[02-Jan-2026 07:44:38 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:44:38 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:44:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/twigsouvenir/source/vendor/autoload.php' (include_path='.:/opt/alt/php84/usr/share/pear:/opt/alt/php84/usr/share/php:/usr/share/pear:/usr/share/php') in /home/twigsouvenir/source/artisan:10
+Stack trace:
+#0 {main}
+  thrown in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:44:50 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:44:50 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:44:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/twigsouvenir/source/vendor/autoload.php' (include_path='.:/opt/alt/php84/usr/share/pear:/opt/alt/php84/usr/share/php:/usr/share/pear:/usr/share/php') in /home/twigsouvenir/source/artisan:10
+Stack trace:
+#0 {main}
+  thrown in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:04 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:04 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/twigsouvenir/source/vendor/autoload.php' (include_path='.:/opt/alt/php84/usr/share/pear:/opt/alt/php84/usr/share/php:/usr/share/pear:/usr/share/php') in /home/twigsouvenir/source/artisan:10
+Stack trace:
+#0 {main}
+  thrown in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:31 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:31 UTC] PHP Warning:  require(/home/twigsouvenir/source/vendor/autoload.php): Failed to open stream: No such file or directory in /home/twigsouvenir/source/artisan on line 10
+[02-Jan-2026 07:45:31 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/twigsouvenir/source/vendor/autoload.php' (include_path='.:/opt/alt/php84/usr/share/pear:/opt/alt/php84/usr/share/php:/usr/share/pear:/usr/share/php') in /home/twigsouvenir/source/artisan:10
+Stack trace:
+#0 {main}
+  thrown in /home/twigsouvenir/source/artisan on line 10
