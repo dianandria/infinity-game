@@ -4,9 +4,9 @@ import Header from '@/Components/Header'
 import Footer from '@/Components/Footer';
 import FlashToaster from '@/Components/FlashToaster'
 
-export default function AppLayout({ children, auth = {} }) {
+export default function AppLayout({ children }) {
   
-  const { headerCategories } = usePage().props;
+  const { auth, headerCategories } = usePage().props;
 
   return (
     <div className="min-h-screen text-gray-100">
