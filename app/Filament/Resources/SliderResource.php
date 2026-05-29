@@ -24,6 +24,15 @@ class SliderResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('placement')
+                    ->label('Slider Page')
+                    ->options([
+                        'home' => 'Sliders Home',
+                        'about' => 'Sliders Tentang Kami',
+                        'contact' => 'Sliders Kontak Kami',
+                    ])
+                    ->required()
+                    ->default('home'),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
@@ -49,6 +58,16 @@ class SliderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('placement')
+                    ->label('Page')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'home' => 'Home',
+                        'about' => 'Tentang Kami',
+                        'contact' => 'Kontak Kami',
+                        default => $state,
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('subtitle')
@@ -73,7 +92,13 @@ class SliderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('placement')
+                    ->label('Slider Page')
+                    ->options([
+                        'home' => 'Sliders Home',
+                        'about' => 'Sliders Tentang Kami',
+                        'contact' => 'Sliders Kontak Kami',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -8,6 +8,27 @@ export default function Show({ category, products }) {
   const [q, setQ]       = useState(filters?.q || '')
   const [sort, setSort] = useState(filters?.sort || 'new')
   const [loading, setLoading] = useState(false)
+  const categoryOrder = ["Jepang", "Korea", "China", "Thailand", "Eropa", "Lainnya"];
+  const fallbackBannerImage = "/images/about-us.jpg";
+
+  const getProductCategories = (product) => {
+    if (!product.categories || product.categories.length === 0) return category.name || "Lainnya";
+
+    const categoryNames = product.categories
+      .map((item) => item.name)
+      .filter((name) => categoryOrder.includes(name))
+      .sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b));
+
+    return categoryNames.length > 0 ? categoryNames.join(", ") : "Lainnya";
+  }
+
+  const addToCart = (product) => {
+    router.post(
+      route("cart.store"),
+      { product_id: product.id, qty: 1 },
+      { preserveScroll: true }
+    )
+  }
 
   const submit = (params) => {
     setLoading(true)
@@ -37,6 +58,9 @@ export default function Show({ category, products }) {
                 <img
                 src={category.banner_url}
                 alt={category.name}
+                onError={(event) => {
+                    event.currentTarget.src = fallbackBannerImage;
+                }}
                 className="absolute inset-0 h-full w-full object-cover"
                 />
             ) : (
@@ -56,12 +80,12 @@ export default function Show({ category, products }) {
                 </p>
                 <h1 className="mt-1 text-xl md:text-2xl lg:text-3xl font-semibold text-white">
                     {category.name}
-                </h1>
+                </h1>{/*
                 {category.description && (
                     <p className="mt-2 max-w-2xl text-xs md:text-sm text-white/80">
                     {category.description}
                     </p>
-                )}
+                )}*/}
                 </div>
             </div>
             </div>
@@ -113,53 +137,61 @@ export default function Show({ category, products }) {
             <>
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {products.data.map((p) => (
-                  <Link
-                    href={route("products.show", p.slug ?? p.id)}
+                  <div
                     key={p.id}
                     className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md"
                   >
-                    <div className="relative h-44 w-full overflow-hidden bg-gray-100">
-                      {p.thumb_url ? (
-                        <img
-                          src={p.thumb_url}
-                          alt={p.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-xs text-gray-400">
-                          No Image
-                        </div>
-                      )}
-                      {p.stock === 0 && (
-                        <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-white">
-                          Out of stock
-                        </span>
-                      )}
-                    </div>
+                    <Link href={route("products.show", p.slug ?? p.id)}>
+                      <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+                        {p.thumb_url ? (
+                          <img
+                            src={p.thumb_url}
+                            alt={p.name}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-xs text-gray-400">
+                            No Image
+                          </div>
+                        )}
+                        {p.stock === 0 && (
+                          <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-white">
+                            Out of stock
+                          </span>
+                        )}
+                      </div>
+                    </Link>
 
                     <div className="flex flex-1 flex-col px-3.5 py-3 space-y-1.5 product-info">
-                      <h2 className="line-clamp-2 text-sm font-semibold text-white">
-                        {p.name}
-                      </h2>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-white/80">
+                        {getProductCategories(p)}
+                      </p>
+                      <Link href={route("products.show", p.slug ?? p.id)}>
+                        <h2 className="line-clamp-2 text-sm font-semibold text-white">
+                          {p.name}
+                        </h2>
+                      </Link>{/* 
                       {p.description && (
                         <p className="line-clamp-2 text-xs text-white">
                           {p.description}
                         </p>
-                      )}
+                      )}*/}
 
-                      <div className="mt-auto flex items-center justify-between pt-2">
+                      <div className="mt-auto flex items-center justify-between gap-3 pt-2">
                         <h3 className="text-sm font-semibold text-white">
                           Rp {Number(p.price).toLocaleString("id-ID")}
                         </h3>
-                        <Link
-                          href={route("products.show", p.slug ?? p.id)}
-                          className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary hover:bg-gray-100"
+                        <button
+                          type="button"
+                          onClick={() => addToCart(p)}
+                          disabled={Number(p.stock) <= 0}
+                          className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-medium text-primary hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          Lihat
-                        </Link>
+                          {Number(p.stock) <= 0 ? "Habis" : "Add to cart"}
+                        </button>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
 

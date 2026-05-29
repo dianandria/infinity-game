@@ -15,37 +15,68 @@ function SkeletonCard() {
   )
 }
 
+const categoryOrder = ['Jepang', 'Korea', 'China', 'Thailand', 'Eropa', 'Lainnya']
+
+function getProductCategories(product) {
+  if (!product.categories || product.categories.length === 0) return 'Lainnya'
+
+  const categoryNames = product.categories
+    .map((category) => category.name)
+    .filter((name) => categoryOrder.includes(name))
+    .sort((a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b))
+
+  return categoryNames.length > 0 ? categoryNames.join(', ') : 'Lainnya'
+}
+
+function addToCart(product) {
+  router.post(
+    route('cart.store'),
+    { product_id: product.id, qty: 1 },
+    { preserveScroll: true }
+  )
+}
+
 function ProductCard({ p }) {
   return (
-    <Link href={`/products/${p.slug}`} className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className="relative">
-        <img
-          className="aspect-square w-full object-cover transition group-hover:scale-[1.02]"
-          src={p.image_url || 'https://via.placeholder.com/600'}
-          alt={p.name}
-          loading="lazy"
-        />
-        {p.stock <= 0 && (
-          <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-white">
-            Out of stock
-          </span>
-        )}
-      </div>
-      <div className="p-3 product-info">
-        <h3 className="font-semibold line-clamp-1 text-white" title={p.name}>{p.name}</h3>
-        <div className='mt-auto flex items-center justify-between pt-2'>
+    <div className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md">
+      <Link href={`/products/${p.slug}`}>
+        <div className="relative overflow-hidden">
+          <img
+            className="aspect-square w-full object-cover transition group-hover:scale-[1.02]"
+            src={p.image_url || 'https://via.placeholder.com/600'}
+            alt={p.name}
+            loading="lazy"
+          />
+          {p.stock <= 0 && (
+            <span className="absolute left-2 top-2 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-white">
+              Out of stock
+            </span>
+          )}
+        </div>
+      </Link>
+      
+      <div className="flex flex-1 flex-col p-3 product-info">
+        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/80">
+          {getProductCategories(p)}
+        </p>
+        <Link href={`/products/${p.slug}`}>
+          <h3 className="font-semibold line-clamp-1 text-white" title={p.name}>{p.name}</h3>
+        </Link>
+        <div className='mt-auto flex items-center justify-between gap-3 pt-2'>
           <h3 className="mt-1 font-semibold text-sm text-white">
             Rp {Number(p.price).toLocaleString('id-ID')}
           </h3>
-          <Link
-            href={`/products/${p.slug}`}
-            className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-primary hover:bg-gray-200"
+          <button
+            type="button"
+            onClick={() => addToCart(p)}
+            disabled={Number(p.stock) <= 0}
+            className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-primary hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Lihat
-          </Link>
+            {Number(p.stock) <= 0 ? 'Habis' : 'Add to cart'}
+          </button>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
 

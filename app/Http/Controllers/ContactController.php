@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactStoreRequest;
 use App\Models\ContactMessage;
+use App\Models\Slider;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,7 +12,14 @@ class ContactController extends Controller
 {
     public function create(Request $request)
     {
+        $sliders = Slider::where('is_active', true)
+            ->where('placement', 'contact')
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
+
         return Inertia::render('Shop/Contact/Index', [
+            'sliders' => $sliders,
             'status' => session('status'),
         ]);
     }

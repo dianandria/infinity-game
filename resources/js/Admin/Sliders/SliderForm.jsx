@@ -3,6 +3,7 @@ import { useForm } from "@inertiajs/react";
 
 export default function SliderForm({ slider, submitRoute, method = "post" }) {
   const { data, setData, post, processing, errors } = useForm({
+    placement: slider?.placement || "home",
     title: slider?.title || "",
     subtitle: slider?.subtitle || "",
     button_text: slider?.button_text || "",
@@ -33,6 +34,22 @@ export default function SliderForm({ slider, submitRoute, method = "post" }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded shadow p-4 space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Slider Page</label>
+        <select
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+          value={data.placement}
+          onChange={(e) => setData("placement", e.target.value)}
+        >
+          <option value="home">Sliders Home</option>
+          <option value="about">Sliders Tentang Kami</option>
+          <option value="contact">Sliders Kontak Kami</option>
+        </select>
+        {errors.placement && (
+          <div className="text-xs text-red-500 mt-1">{errors.placement}</div>
+        )}
+      </div>
+
       <div>
         
         <label className="block text-sm font-medium mb-1">Title</label>

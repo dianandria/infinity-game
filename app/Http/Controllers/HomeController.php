@@ -12,7 +12,10 @@ class HomeController extends Controller
 {
     public function index()
     {
+        $categoryOrder = ['Jepang', 'Korea', 'China', 'Thailand', 'Eropa', 'Lainnya'];
+
         $sliders = Slider::where('is_active', true)
+            ->where('placement', 'home')
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->get();
@@ -20,7 +23,7 @@ class HomeController extends Controller
         $featuredProducts = Product::where('is_featured', true)
             ->orderBy('featured_order')
             ->orderByDesc('id')
-            ->with(['mainImage']) // sesuaikan dengan relasi yang kamu punya
+            ->with(['mainImage', 'categories:id,name,slug']) // sesuaikan dengan relasi yang kamu punya
             ->take(8)
             ->get()
             ->transform(function ($product) {
@@ -30,9 +33,10 @@ class HomeController extends Controller
             });
 
         $featuredCategories = Category::query()
-            ->orderBy('order')
-            ->take(6)
-            ->get(['id', 'name', 'slug', 'banner_path', 'order']);
+            ->whereIn('name', $categoryOrder)
+            ->get(['id', 'name', 'slug', 'banner_path', 'order'])
+            ->sortBy(fn ($category) => array_search($category->name, $categoryOrder))
+            ->values();
 
         return Inertia::render('Home', [
             'sliders'          => $sliders,

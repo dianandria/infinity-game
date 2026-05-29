@@ -44,12 +44,12 @@ export default function Header({ user = null, categories = [] }) {
         </div>
 
         {/* NAV CENTER (desktop) */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
+        <nav className="hidden md:flex items-center gap-12 text-sm font-medium text-gray-700">
           <Link
             href={route('home.index')}
             className="hover:text-gray-900 main-menu"
           >
-            Home
+            HOME
           </Link>
 
           {/* DROPDOWN CATEGORIES - desktop */}
@@ -59,7 +59,7 @@ export default function Header({ user = null, categories = [] }) {
               onClick={() => setOpenCategories(prev => !prev)}
               className="inline-flex items-center gap-1 hover:text-gray-900"
             >
-              <span>Kategori</span>
+              <span>KATEGORI</span>
               <svg
                 className={`h-4 w-4 transition-transform ${openCategories ? 'rotate-180' : ''}`}
                 viewBox="0 0 20 20"
@@ -99,13 +99,13 @@ export default function Header({ user = null, categories = [] }) {
             href={route('about')}
             className="hover:text-gray-900 main-menu"
           >
-            Tentang Kami
+            TENTANG KAMI
           </Link>
           <Link
             href={route('contact.create')}
             className="hover:text-gray-900 main-menu"
           >
-            Kontak Kami
+            KONTAK KAMI
           </Link>
         </nav>
 
@@ -144,7 +144,7 @@ export default function Header({ user = null, categories = [] }) {
               className="block py-1 hover:text-gray-900"
               onClick={() => setMobileOpen(false)}
             >
-              Home
+              HOME
             </Link>
 
             <Link

@@ -26,6 +26,7 @@ class SliderRequest extends FormRequest
         $imageRule = $isStore ? 'required' : 'nullable';
 
         return [
+            'placement'    => ['required', 'string', 'in:home,about,contact'],
             'title'        => ['required', 'string', 'max:255'],
             'subtitle'     => ['nullable', 'string', 'max:255'],
             'button_text'  => ['nullable', 'string', 'max:255'],
@@ -55,6 +56,9 @@ class SliderRequest extends FormRequest
 
         // checkbox: kadang tidak terkirim kalau unchecked
         $data['is_active'] = (bool) ($data['is_active'] ?? false);
+
+        // default slider placement
+        $data['placement'] = $data['placement'] ?? 'home';
 
         // default sort order
         $data['sort_order'] = $data['sort_order'] ?? 0;

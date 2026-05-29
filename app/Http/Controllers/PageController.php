@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Slider;
 
 class PageController extends Controller
 {
     public function about()
     {
+        $sliders = Slider::where('is_active', true)
+            ->where('placement', 'about')
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
+
         return Inertia::render('Shop/About/Index', [
+            'sliders' => $sliders,
             'about' => [
                 'title'   => 'About Us',
                 'tagline' => 'We create products that are made to last.',
