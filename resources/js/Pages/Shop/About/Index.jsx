@@ -1,34 +1,28 @@
 import React from 'react'
 import { Head, Link, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
+import PageSlider from '@/Components/PageSlider'
 
 export default function AboutIndex() {
-  const { about } = usePage().props
+  const { about, sliders = [] } = usePage().props
 
   return (
     <AppLayout>
       <Head title="Tentang Kami - Twig Souvenir" />
+      <PageSlider sliders={sliders} />
 
       <div className="mx-auto max-w-3xl px-4 py-12 lg:py-16">
-        
-        {/* Bagian Judul */}
-        <div className="mb-10 text-center">
-          <h1 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
-            Tentang Twig Souvenir
-          </h1>
-          <p className="text-lg text-gray-600">
-            Menghadirkan pesona dunia lebih dekat dengan Anda.
-          </p>
-        </div>
+      
 
-        {/* Gambar Banner (Opsional - Ganti src dengan gambar yang sesuai) */}
-        <div className="mb-12 aspect-video w-full overflow-hidden rounded-2xl bg-gray-100">
-          <img 
-            src="/images/about-us.jpg" 
-            alt="Koleksi Twig Souvenir" 
-            className="h-full w-full object-cover"
-          />
-        </div>
+        {sliders.length === 0 && (
+          <div className="mb-12 aspect-video w-full overflow-hidden rounded-2xl bg-gray-100">
+            <img
+              src="/images/about-us.jpg"
+              alt="Koleksi Twig Souvenir"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
 
         {/* Konten Utama */}
         <div className="space-y-8 text-gray-600 leading-relaxed md:text-lg">

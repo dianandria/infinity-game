@@ -3,9 +3,13 @@
 import React from 'react'
 import { Head, useForm, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
+import PageSlider from '@/Components/PageSlider'
 
 export default function ContactIndex() {
-  const { status } = usePage().props
+  const { status, sliders = [] } = usePage().props
+  const mapQuery = 'Jl. Sukajadi No.127, Cipedes, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162'
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`
+  const mapShareUrl = 'https://share.google/ALkdAHzXgK0X9jg6U'
 
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
@@ -29,15 +33,21 @@ export default function ContactIndex() {
   return (
     <AppLayout>
       <Head title="Hubungi Kami" />
+      <PageSlider sliders={sliders} />
 
       <div className="mx-auto max-w-3xl px-4 py-10 lg:py-14">
         
-        {/* Bagian Judul & Deskripsi */}
-        <h1 className="mb-2 text-3xl font-bold text-gray-900">Hubungi Kami</h1>
-        <p className="mb-8 text-gray-600">
-          Punya pertanyaan, penawaran kerja sama, atau butuh bantuan terkait pesanan Anda? Isi formulir di bawah ini atau hubungi kami langsung melalui informasi yang tersedia.
-        </p>
-
+      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 shadow-sm">
+      <div className="aspect-[16/9] w-full bg-gray-100">
+        <iframe
+          title="Lokasi Twig Souvenir"
+          src={mapEmbedUrl}
+          className="h-full w-full border-0"
+          loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+        </div>
         {/* Kotak Informasi Kontak (Atas) */}
         <div className="space-y-6 rounded-2xl bg-gray-50 p-6 border border-gray-100 md:flex md:space-y-0 md:space-x-12">
           {/* Alamat Toko */}
@@ -49,6 +59,7 @@ export default function ContactIndex() {
               Jawa Barat 40162
             </p>
           </div>
+
 
           {/* Nomor Kontak */}
           <div className="flex-1">
@@ -65,6 +76,23 @@ export default function ContactIndex() {
                 </a>
               </p>
             </div>
+          </div>
+        </div>
+
+       
+          <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Lokasi Toko</h3>
+              <p className="mt-1 text-sm text-gray-600">{mapQuery}</p>
+            </div>
+            <a
+              href={mapShareUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+            >
+              Buka di Google Maps
+            </a>
           </div>
         </div>
 

@@ -36,7 +36,7 @@ class CategoryPageController extends Controller
                 // default: produk terbaru duluan
                 $qr->orderBy('created_at', 'desc');
             })
-            ->with(['mainImage'])
+            ->with(['mainImage', 'categories:id,name,slug'])
             ->paginate(12)
             ->withQueryString() // penting supaya q & sort tetap ada di pagination link
             ->through(function ($product) {

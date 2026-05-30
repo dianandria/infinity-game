@@ -17,6 +17,7 @@ class ProductController extends Controller
         $perPage    = min((int) $request->integer('per_page', 12), 50);
 
         $products = Product::query()
+            ->with(['mainImage', 'categories:id,name,slug'])
             ->where('is_active', true)
             ->when($q, fn($qr) =>
                 $qr->where(function ($w) use ($q) {
@@ -36,7 +37,7 @@ class ProductController extends Controller
             ->when(in_array($sort, ['new']), function ($qr) use ($sort) {
                 return $qr->orderBy('created_at', $sort === 'new' ? 'desc' : 'asc');
             })
-            ->select(['id','name','slug','price','stock','image_url'])
+            ->select(['id','name','slug','price','stock'])
             ->latest('id')
             ->paginate($perPage)
             ->withQueryString(); 
@@ -49,6 +50,11 @@ class ProductController extends Controller
                 'price'     => $p->price,
                 'stock'     => $p->stock,
                 'image_url' => $p->image_url,
+                'categories' => $p->categories->map(fn ($category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                ])->values(),
             ];
         });
 

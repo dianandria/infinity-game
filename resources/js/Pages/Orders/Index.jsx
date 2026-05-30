@@ -6,13 +6,7 @@ export default function Index() {
     const hasOrders = orders.data.length > 0;
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Riwayat Transaksi
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="My Orders" />
 
             <div className="py-12">

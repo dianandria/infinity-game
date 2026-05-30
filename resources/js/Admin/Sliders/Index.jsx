@@ -4,6 +4,11 @@ import AdminLayout from "@/Layouts/AdminLayout";
 
 export default function Index() {
   const { sliders } = usePage().props;
+  const placementLabels = {
+    home: "Home",
+    about: "Tentang Kami",
+    contact: "Kontak Kami",
+  };
 
   const handleDelete = (id) => {
     if (!confirm("Delete this slider?")) return;
@@ -31,6 +36,7 @@ export default function Index() {
           <thead className="bg-gray-100">
             <tr>
               <th className="px-4 py-2 text-left">Image</th>
+              <th className="px-4 py-2 text-left">Page</th>
               <th className="px-4 py-2 text-left">Title</th>
               <th className="px-4 py-2 text-left">Order</th>
               <th className="px-4 py-2 text-left">Active</th>
@@ -46,6 +52,11 @@ export default function Index() {
                     alt={slider.title}
                     className="h-12 w-auto rounded object-cover"
                   />
+                </td>
+                <td className="px-4 py-2">
+                  <span className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                    {placementLabels[slider.placement] || slider.placement}
+                  </span>
                 </td>
                 <td className="px-4 py-2">{slider.title}</td>
                 <td className="px-4 py-2">{slider.sort_order}</td>
@@ -80,7 +91,7 @@ export default function Index() {
             {sliders.data.length === 0 && (
               <tr>
                 <td
-                  colSpan="5"
+                  colSpan="6"
                   className="px-4 py-4 text-center text-gray-500"
                 >
                   No sliders found.
