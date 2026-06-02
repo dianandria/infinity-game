@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
 
@@ -10,12 +10,13 @@ export default function Checkout() {
     name:  prefill?.name  || '',
     email: prefill?.email || '',
     phone: prefill?.phone || '',
-    address: '',
-    city: '',
-    district: '',
-    province: '',
-    postal_code: '',
+    address: prefill?.address || '',
+    city: prefill?.city || '',
+    district: prefill?.district || '',
+    province: prefill?.province || '',
+    postal_code: prefill?.postal_code || '',
     notes: '',
+    district_id: prefill?.district_id || '',
     payment_method: '',   // ex: 'va', 'qris', 'cod'
     payment_channel: '',   // ex: 'bri', 'bca', 'cod'
     shipping_code: '',     // misal 'jne'
@@ -49,9 +50,29 @@ export default function Checkout() {
   const [districts, setDistricts] = useState([]);
 
   // Selected province and city state
-  const [selectedProvinceId, setSelectedProvinceId] = useState("");
-  const [selectedCityId, setSelectedCityId] = useState("");
-  const [selectedDistrictId, setSelectedDistrictId] = useState("");
+  const [selectedProvinceId, setSelectedProvinceId] = useState(prefill?.province_id || "");
+  const [selectedCityId, setSelectedCityId] = useState(prefill?.city_id || "");
+  const [selectedDistrictId, setSelectedDistrictId] = useState(prefill?.district_id || "");
+
+  useEffect(() => {
+    const loadSavedLocations = async () => {
+      try {
+        if (prefill?.province_id) {
+          const response = await axios.get(`/cities/${prefill.province_id}`);
+          setCities(response.data);
+        }
+
+        if (prefill?.city_id) {
+          const response = await axios.get(`/districts/${prefill.city_id}`);
+          setDistricts(response.data);
+        }
+      } catch (error) {
+        console.error('Error loading saved shipping address:', error);
+      }
+    };
+
+    loadSavedLocations();
+  }, [prefill?.city_id, prefill?.province_id]);
 
   // Mengambil kota berdasarkan provinsi yang dipilih
   const fetchCities = async (provinceId) => {
@@ -80,12 +101,15 @@ export default function Checkout() {
   const prov = provinces.find(p => String(p.id) === String(id));
 
   setSelectedProvinceId(id);
+  setSelectedCityId("");
+  setSelectedDistrictId("");
 
   setForm(prev => ({
     ...prev,
     province: prov?.name || "", // ✅ nama
     city: "",
     district: "",
+    district_id: "",
   }));
 
   fetchCities(id);
@@ -101,7 +125,10 @@ export default function Checkout() {
     setForm(prev => ({
       ...prev,
       city: city?.name || "",
+      district: "",
+      district_id: "",
     }));
+    setSelectedDistrictId("");
 
     fetchDistricts(id);
   };

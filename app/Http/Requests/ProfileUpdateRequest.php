@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,8 +22,17 @@ class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::in([$this->user()->email]),
             ],
+            'phone' => ['nullable', 'string', 'min:10', 'max:15', 'regex:/^(0|62)[0-9]+$/'],
+            'address' => ['nullable', 'string', 'max:240'],
+            'province_id' => ['nullable', 'integer', 'min:0'],
+            'province' => ['nullable', 'string', 'max:120'],
+            'city_id' => ['nullable', 'integer', 'min:0'],
+            'city' => ['nullable', 'string', 'max:120'],
+            'district_id' => ['nullable', 'integer', 'min:0'],
+            'district' => ['nullable', 'string', 'max:120'],
+            'postal_code' => ['nullable', 'string', 'max:15'],
         ];
     }
 }
