@@ -20,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\TextColumn;
+// 1. IMPORT THE EXPORT BULK ACTION CLASS
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ProductResource extends Resource
 {
@@ -74,7 +76,7 @@ class ProductResource extends Resource
                             ->schema([
                                 Components\Toggle::make('is_external')
                                     ->label('Use external image URL')
-                                    ->live(), // Triggers UI reactivity when clicked
+                                    ->live(),
 
                                 Components\TextInput::make('external_url')
                                     ->label('Image URL')
@@ -94,36 +96,23 @@ class ProductResource extends Resource
                             ->reorderable()
                             ->collapsible()
 
-                            // 1. HYDRATE FORM: When opening an existing record
                             ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
-                                // Check if the path exists and starts with 'http' (covers both http:// and https://)
                                 $isExternal = str_starts_with($data['path'] ?? '', 'http');
-                                
-                                // Set the dummy fields based on the database 'path'
                                 $data['is_external'] = $isExternal;
                                 $data['external_url'] = $isExternal ? $data['path'] : null;
                                 $data['upload_path'] = !$isExternal ? $data['path'] : null;
-                                
                                 return $data;
                             })
 
-                            // 2. CREATE: When saving a brand new image row
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                 $data['path'] = !empty($data['is_external']) ? $data['external_url'] : $data['upload_path'];
-                                
-                                // Remove the dummy fields so Laravel doesn't crash trying to save them to the DB
                                 unset($data['is_external'], $data['external_url'], $data['upload_path']);
-                                
                                 return $data;
                             })
 
-                            // 3. UPDATE: When saving edits to an existing image row
                             ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
                                 $data['path'] = !empty($data['is_external']) ? $data['external_url'] : $data['upload_path'];
-                                
-                                // Remove the dummy fields so Laravel doesn't crash trying to save them to the DB
                                 unset($data['is_external'], $data['external_url'], $data['upload_path']);
-                                
                                 return $data;
                             }),
                     ]),
@@ -139,11 +128,10 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                // Add the categories column here
                 TextColumn::make('categories.name')
                     ->label('Categories')
                     ->badge()
-                    ->color('success') // Optional: changes the badge color
+                    ->color('success')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('IDR', locale: 'id')
@@ -174,7 +162,6 @@ class ProductResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                // Add the category filter here
                 SelectFilter::make('categories')
                     ->relationship('categories', 'name')
                     ->multiple()
@@ -200,12 +187,15 @@ class ProductResource extends Resource
                         ])
                         ->action(function (Collection $records, array $data): void {
                             foreach ($records as $record) {
-                                // Safely attaches the new category without removing existing ones
                                 $record->categories()->syncWithoutDetaching([$data['category_id']]);
                             }
                         })
                         ->deselectRecordsAfterCompletion()
                         ->successNotificationTitle('Category assigned successfully!'),
+                        
+                    // 2. ADD THE EXPORT BULK ACTION HERE
+                    ExportBulkAction::make()
+                        ->label('Export to Excel'),
                 ]),
             ]);
     }

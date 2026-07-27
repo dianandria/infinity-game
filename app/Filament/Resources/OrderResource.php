@@ -21,13 +21,20 @@ use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\OrderResource\RelationManagers\ItemsRelationManager;
+// 1. Tambahkan import untuk Excel Export
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction; 
 
 class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?int $navigationSort = 2;
+
+    // 2. Tambahkan method ini untuk menyembunyikan tombol Create secara global di resource ini
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -56,12 +63,12 @@ class OrderResource extends Resource
                                 ");
                             })->columnSpanFull(),
                     ])
-                    ->columns(2), // Konten di dalam baris 1 dibagi 2 kolom
+                    ->columns(2),
 
-                // BARIS 2: Items (Menggunakan Repeater agar muncul di tengah formulir)
+                // BARIS 2: Items 
                 Section::make('Items')
                     ->schema([
-                        Repeater::make('items') // Pastikan ada relasi 'items' di model Order
+                        Repeater::make('items') 
                             ->relationship()
                             ->schema([
                                 TextInput::make('name')->label('Produk')->disabled(),
@@ -70,16 +77,15 @@ class OrderResource extends Resource
                                 TextInput::make('subtotal')->label('Subtotal')->prefix('Rp')->numeric()->disabled(),
                             ])
                             ->columns(4)
-                            ->addable(false)    // Matikan tombol tambah
-                            ->deletable(false)  // Matikan tombol hapus
-                            ->reorderable(false) // Matikan fitur urutkan
-                            ->label(false),      // Sembunyikan label 'Items' ganda
+                            ->addable(false)    
+                            ->deletable(false)  
+                            ->reorderable(false) 
+                            ->label(false),      
                     ]),
 
                 // BARIS 3: Update & Rincian
                 Section::make('Update & Rincian')
                     ->schema([
-                        // Field yang bisa diedit
                         Forms\Components\Group::make([
                             Select::make('status')
                                 ->options([
@@ -92,7 +98,6 @@ class OrderResource extends Resource
                             TextInput::make('shipping_awb')->label('No. Resi (AWB)'),
                         ])->columns(2)->columnSpanFull(),
 
-                        // Rincian Biaya (Read-only)
                         TextInput::make('subtotal')->prefix('Rp')->numeric()->disabled(),
                         TextInput::make('shipping_fee')->prefix('Rp')->numeric()->disabled(),
                         TextInput::make('payment_fee')->prefix('Rp')->numeric()->disabled(),
@@ -104,9 +109,9 @@ class OrderResource extends Resource
                             ->disabled()
                             ->extraInputAttributes(['style' => 'font-weight: bold; color: #4f46e5;']),
                     ])
-                    ->columns(4), // Bagian rincian biaya dibagi 4 kolom dalam baris ini
+                    ->columns(4), 
             ])
-            ->columns(1); // Ini kuncinya: Memaksa setiap Section utama menjadi 1 baris penuh
+            ->columns(1); 
     }
 
     public static function table(Table $table): Table
@@ -115,22 +120,21 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('code')
                     ->label('code')
-                    ->searchable(), // Mengaktifkan pencarian
+                    ->searchable(), 
                     
                 TextColumn::make('created_at')
                     ->label('created_at')
-                    ->dateTime('n/j/Y, h:i:s A') // Format sesuai gambar: 1/14/2026, 11:01:52 PM
+                    ->dateTime('n/j/Y, h:i:s A') 
                     ->sortable(),
                     
-                TextColumn::make('customer_name') // Asumsi nama relasi adalah 'customer'
+                TextColumn::make('customer_name') 
                     ->label('customer')
-                    // Menambahkan email di bawah nama sesuai gambar
                     ->description(fn ($record) => $record->customer_email ?? '-') 
-                    ->searchable(['name', 'email']), // Cari berdasarkan nama atau email
+                    ->searchable(['name', 'email']), 
                     
                 TextColumn::make('total')
                     ->label('total')
-                    ->money('idr', locale: 'id') // Format ke Rupiah otomatis
+                    ->money('idr', locale: 'id') 
                     ->sortable(),
                     
                 TextColumn::make('payment_provider')
@@ -139,17 +143,16 @@ class OrderResource extends Resource
                     
                 TextColumn::make('status')
                     ->label('status')
-                    ->badge() // Membuat tampilan seperti badge warna-warni
+                    ->badge() 
                     ->color(fn (string $state): string => match ($state) {
-                        'paid' => 'success',     // Hijau
-                        'expired' => 'gray',     // Abu-abu (sesuai gambar)
-                        'pending' => 'warning',  // Kuning
-                        'shipped' => 'info',     // Biru
+                        'paid' => 'success',     
+                        'expired' => 'gray',     
+                        'pending' => 'warning',  
+                        'shipped' => 'info',     
                         default => 'primary',
                     }),
             ])
             ->filters([
-                // Dropdown Filter untuk Status
                 SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -157,14 +160,11 @@ class OrderResource extends Resource
                         'expired' => 'Expired',
                     ]),
                     
-                // Dropdown Filter untuk Provider
                 SelectFilter::make('provider')
                     ->options([
                         'ipaymu' => 'iPaymu',
-                        // Tambahkan provider lain di sini
                     ]),
                     
-                // Filter Rentang Tanggal (Date Range)
                 Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from')->label('Dari Tanggal'),
@@ -183,15 +183,16 @@ class OrderResource extends Resource
                     })
             ])
             ->actions([
-                // Mengubah tombol bawaan Edit menjadi "View" seperti di gambar lama Anda
                 Tables\Actions\EditAction::make()
                     ->label('View')
-                    ->icon('heroicon-m-eye') // Opsional: Tambahkan icon mata
+                    ->icon('heroicon-m-eye') 
                     ->color('primary'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    // 3. Tambahkan fungsi Export Excel di sini
+                    ExportBulkAction::make(),
                 ]),
             ]);
     }
@@ -207,7 +208,7 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
+            // 4. Hapus route 'create' karena tombol sudah kita sembunyikan
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
