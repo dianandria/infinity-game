@@ -78,9 +78,17 @@ class CheckoutController extends Controller
        
         return Inertia::render('Checkout/Index', [
             'prefill' => [
-                'name'  => optional($request->user())->name,
+                'name' => optional($request->user())->name,
                 'email' => optional($request->user())->email,
                 'phone' => optional($request->user())->phone ?? '',
+                'address' => optional($request->user())->address ?? '',
+                'province_id' => optional($request->user())->province_id ?? '',
+                'province' => optional($request->user())->province ?? '',
+                'city_id' => optional($request->user())->city_id ?? '',
+                'city' => optional($request->user())->city ?? '',
+                'district_id' => optional($request->user())->district_id ?? '',
+                'district' => optional($request->user())->district ?? '',
+                'postal_code' => optional($request->user())->postal_code ?? '',
             ],
             'cart'    => $summary,
             'methods' => $methods,
