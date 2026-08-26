@@ -70,6 +70,7 @@ class ProductController extends Controller
         $product->load([
             'images' => fn ($q) => $q->orderBy('is_main', 'desc')->orderBy('sort_order'),
             'mainImage',
+            'categories:id,name,slug',
         ]);
 
         $related = Product::query()
@@ -101,7 +102,13 @@ class ProductController extends Controller
                 'description' => $product->description,
                 'price' => $product->price,
                 'stock' => $product->stock,
+                'sku' => $product->sku,
                 'image_url' => $product->image_url, // pakai accessor Product
+                'categories' => $product->categories->map(fn ($category) => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                ])->values(),
                 'images' => $product->images->map(fn ($img) => [
                     'id' => $img->id,
                     'path' => $img->path,

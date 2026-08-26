@@ -1,83 +1,204 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import React from 'react';
+import { Head, Link } from '@inertiajs/react';
 import AppLayout from "@/Layouts/AppLayout";
-// Import your layout component here if you use persistent layouts
-// import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function RefundPolicy() {
-
     return (
         <AppLayout>
-            <Head title="FAQ - Twighouse Souvenir" />
+            <Head title="Kebijakan Pengembalian - Infinity Game" />
 
-            <div className="max-w-4xl mx-auto px-4 py-12 mt-12">
-                <div className="text-center mb-12">
-                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Kebijakan Pengembalian (Refund Policy)</h1>
-                    <p className="text-gray-600">Terima kasih telah mempercayakan momen spesial Anda pada Twig Souvenir. Mohon baca kebijakan pengembalian kami.</p>
-                    <div className="mt-4 h-1 w-20 bg-rose-500 mx-auto rounded-full"></div>
+            <main className="return-main">
+                <section className="return-banner">
+                    <div className="return-banner-overlay"></div>
+                    <div className="return-banner-content">
+                        <p className="banner-subtitle">RETURN &amp; REFUND POLICY</p>
+                        <h1>Kebijakan Pengembalian &amp; Garansi</h1>
+                        <p className="banner-desc">
+                            Komitmen Infinity Game untuk memastikan perlindungan konsumen, proses retur transparan, serta garansi resmi terpercaya untuk setiap transaksi Anda.
+                        </p>
+                    </div>
+                </section>
+
+                <div className="breadcrumb-container">
+                    <nav className="breadcrumb">
+                        <Link href={route('home.index')}>Home</Link>
+                        <span className="separator">/</span>
+                        <span className="current">Kebijakan Pengembalian</span>
+                    </nav>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="bg-amber-50 border-l-4 border-amber-400 p-6 m-6 rounded-r-lg">
-                        <div className="flex items-start">
-                            <div className="flex-shrink-0 text-amber-400">
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                            </div>
-                            <div className="ml-4">
-                                <h3 className="text-sm font-semibold text-amber-800 uppercase tracking-wider">Penting: Wajib Video Unboxing</h3>
-                                <p className="mt-1 text-sm text-amber-700 leading-relaxed">
-                                    Komplain barang rusak atau kurang <strong>wajib</strong> menyertakan video unboxing utuh tanpa jeda/edit dari paket sebelum dibuka. Tanpa bukti video, klaim tidak dapat diproses.
+                <div className="return-container">
+                    <section className="policy-pillars">
+                        <div className="pillar-card">
+                            <div className="pillar-icon">🎮</div>
+                            <div className="pillar-body">
+                                <h3>Konsol &amp; Aksesori</h3>
+                                <p className="pillar-highlight">3x24 Jam Penukaran Unit Baru</p>
+                                <p>
+                                    Perlindungan tukar baru (1-to-1 replacement) untuk kerusakan cacat pabrik (factory defect) yang dilaporkan dalam 3 hari sejak paket diterima, didukung garansi resmi distributor.
                                 </p>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="p-8 space-y-10">
-                        
-                        <section>
-                            <div className="flex items-center mb-4">
-                                <span className="bg-rose-100 text-rose-600 p-2 rounded-lg mr-3">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                </span>
-                                <h2 className="text-xl font-bold text-gray-900">Syarat Pengembalian Barang</h2>
-                            </div>
-                            <ul className="space-y-3 text-gray-600 ml-12 list-disc">
-                                <li>Batas waktu klaim maksimal <strong>2x24 jam</strong> setelah status resi dinyatakan diterima oleh sistem ekspedisi.</li>
-                                <li><strong>Produk Custom (Contoh: Cetak Nama, Tanggal, atau Desain Khusus) tidak dapat dikembalikan</strong> atau dibatalkan, kecuali terdapat kesalahan cetak murni dari pihak produksi Twig Souvenir.</li>
-                                <li>Barang yang diretur harus dikembalikan dalam keadaan lengkap beserta *packaging* (plastik/box) aslinya.</li>
-                            </ul>
-                        </section>
-
-                        <hr className="border-gray-100" />
-
-                        <section>
-                            <div className="flex items-center mb-4">
-                                <span className="bg-green-100 text-green-600 p-2 rounded-lg mr-3">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </span>
-                                <h2 className="text-xl font-bold text-gray-900">Mekanisme Pengembalian Dana</h2>
-                            </div>
-                            <div className="ml-12 space-y-4">
-                                <p className="text-gray-600 leading-relaxed">
-                                    Jika klaim disetujui, dana akan dikembalikan sesuai dengan kesepakatan (bisa berupa uang kembali atau pengiriman ulang barang pengganti).
+                        <div className="pillar-card">
+                            <div className="pillar-icon">💿</div>
+                            <div className="pillar-body">
+                                <h3>Kaset Game &amp; Blu-Ray</h3>
+                                <p className="pillar-highlight">Jaminan Disk Mulus &amp; Tersegel</p>
+                                <p>
+                                    Retur berlaku apabila kaset/disk fisik mengalami kerusakan fisik saat diterima atau tidak terdeteksi oleh mesin konsol dengan bukti unboxing resmi.
                                 </p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Waktu Proses Refund</p>
-                                        <p className="text-gray-700 font-medium">Maksimal 3 Hari Kerja</p>
-                                    </div>
-                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Metode Refund</p>
-                                        <p className="text-gray-700 font-medium">Transfer Bank / E-Wallet</p>
-                                    </div>
+                            </div>
+                        </div>
+
+                        <div className="pillar-card">
+                            <div className="pillar-icon">🎟️</div>
+                            <div className="pillar-body">
+                                <h3>Voucher &amp; Game Digital</h3>
+                                <p className="pillar-highlight">Non-Refundable Policy</p>
+                                <p>
+                                    Kode voucher digital (Steam, PSN, eShop, Xbox Live) yang telah terkirim dan valid bersifat tidak dapat dikembalikan atas alasan salah beli regional atau kelalaian akun.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="return-steps-section">
+                        <h2 className="section-title">4 Langkah Mudah Pengajuan Klaim Retur</h2>
+                        <p className="section-subtitle">Ikuti tahapan berikut agar klaim penukaran produk atau refund Anda dapat diproses dengan cepat.</p>
+
+                        <div className="steps-grid">
+                            <div className="step-card">
+                                <div className="step-number">01</div>
+                                <h3>Siapkan Video Unboxing</h3>
+                                <p>Rekam paket sejak resi ekspedisi masih tertempel rapi hingga produk dinyalakan/ditampilkan cacat fisiknya tanpa terputus (no cut/edit).</p>
+                            </div>
+                            <div className="step-card">
+                                <div className="step-number">02</div>
+                                <h3>Ajukan Tiket Klaim</h3>
+                                <p>Hubungi pusat bantuan atau kirim pesan melalui halaman kontak/WhatsApp dengan melampirkan nomor pesanan (Invoice) dan bukti video.</p>
+                            </div>
+                            <div className="step-card">
+                                <div className="step-number">03</div>
+                                <h3>Verifikasi &amp; Kirim Unit</h3>
+                                <p>Setelah disetujui CS, kirimkan kembali produk lengkap dengan box, buku panduan, dan seluruh aksesori ke alamat pusat retur Infinity Game.</p>
+                            </div>
+                            <div className="step-card">
+                                <div className="step-number">04</div>
+                                <h3>Penggantian atau Refund</h3>
+                                <p>Tim teknisi akan memeriksa unit maksimal 1x24 jam. Jika valid, unit baru segera dikirimkan atau dana dikembalikan penuh (100% refund).</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="return-details-section">
+                        <article className="return-policy-article">
+                            <div className="article-badge">PASAL I</div>
+                            <h2>Syarat Mutlak Video Unboxing</h2>
+                            <p>
+                                Untuk mencegah penyalahgunaan dan memudahkan klaim asuransi kepada pihak ekspedisi, Infinity Game memberlakukan aturan wajib lampiran bukti video unboxing bagi seluruh klaim barang fisik.
+                            </p>
+                            <div className="return-callout warning">
+                                <strong>Ketentuan Video Unboxing yang Sah:</strong>
+                                <ul>
+                                    <li>Video diambil berkesinambungan (satu kali take) dari semua sisi kemasan sebelum paket dibuka.</li>
+                                    <li>Resi pengiriman harus terlihat jelas nomor dan alamatnya pada video.</li>
+                                    <li>Proses pembukaan segel kardus hingga unit dikeluarkan dan diperiksa fungsinya tidak boleh terpotong atau melalui proses penyuntingan (video editing).</li>
+                                </ul>
+                            </div>
+                        </article>
+
+                        <article className="return-policy-article">
+                            <div className="article-badge">PASAL II</div>
+                            <h2>Kriteria Kerusakan &amp; Cakupan Garansi</h2>
+                            <p>
+                                Kami membedakan secara tegas antara cacat produksi pabrik (Factory Defect) dengan kerusakan yang diakibatkan oleh pemakaian pengguna (Human Error).
+                            </p>
+                            <div className="policy-comparison-grid">
+                                <div className="comparison-box accepted">
+                                    <h4>✓ Dapat Diajukan Klaim (Valid)</h4>
+                                    <ul>
+                                        <li>Konsol mati total (no display/no power) saat pertama kali dihidupkan.</li>
+                                        <li>Joy-Con atau DualSense mengalami cacat optik/analog drift dari pabrik sejak dalam kemasan.</li>
+                                        <li>Kaset video game/disk Blu-Ray tidak dapat terbaca meski kaset tidak lecet/gores.</li>
+                                        <li>Kesalahan pengiriman dari pihak toko (tipe, warna, atau judul game tidak sesuai invoice).</li>
+                                    </ul>
+                                </div>
+                                <div className="comparison-box rejected">
+                                    <h4>✕ Tidak Tercover Garansi / Retur (Ditolak)</h4>
+                                    <ul>
+                                        <li>Kerusakan akibat jatuh, terbentur, korsleting listrik rumah, atau terkena cairan (Human Error).</li>
+                                        <li>Segel garansi resmi pabrikan/distributor rusak, sobek, atau telah dibuka oleh pihak ketiga.</li>
+                                        <li>Salah beli judul game, region konsol, atau berubah pikiran setelah kemasan segel dibuka.</li>
+                                        <li>Kode voucher digital yang telah dikirimkan ke email/akun pengguna.</li>
+                                    </ul>
                                 </div>
                             </div>
-                        </section>
-                    </div>
+                        </article>
+
+                        <article className="return-policy-article">
+                            <div className="article-badge">PASAL III</div>
+                            <h2>Metode &amp; Waktu Pengembalian Dana (Refund)</h2>
+                            <p>
+                                Apabila produk penukaran (unit baru) sedang tidak tersedia dalam stok, pengguna berhak memilih opsi pengembalian dana penuh (100% Refund).
+                            </p>
+                            <div className="refund-table-wrapper">
+                                <table className="refund-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Metode Pembayaran</th>
+                                            <th>Estimasi Waktu Proses</th>
+                                            <th>Ketentuan Biaya Admin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Bank Transfer / Virtual Account</strong></td>
+                                            <td>1 &ndash; 3 Hari Kerja</td>
+                                            <td>Tanpa Potongan (100% Penuh)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>E-Wallet (GoPay, OVO, Dana, ShopeePay)</strong></td>
+                                            <td>1 &ndash; 24 Jam Kerja</td>
+                                            <td>Tanpa Potongan (100% Penuh)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Kartu Kredit / PayLater</strong></td>
+                                            <td>5 &ndash; 14 Hari Kerja (Sesuai Bank Penerbit)</td>
+                                            <td>Pengembalian Limit Kredit (Void/Reversal)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </article>
+
+                        <article className="return-policy-article">
+                            <div className="article-badge">PASAL IV</div>
+                            <h2>Biaya Pengiriman Retur &amp; Asuransi</h2>
+                            <p>Kebijakan mengenai beban biaya ongkos kirim (ongkir) diatur berdasarkan sumber kesalahan serta waktu pelaporan:</p>
+                            <ul>
+                                <li>
+                                    <strong>Cacat Pabrik &le; 3 Hari / Kesalahan Toko:</strong> Seluruh biaya ongkos kirim pengembalian barang dari pembeli ke toko dan pengiriman unit pengganti ditanggung sepenuhnya oleh <strong>Infinity Game</strong>.
+                                </li>
+                                <li>
+                                    <strong>Klaim Garansi Resmi &gt; 3 Hari:</strong> Pengguna menanggung biaya pengiriman ke pusat servis resmi distributor merek (Sony Center, Nintendo Authorized Service, dll) atau dapat dibantu oleh tim toko dengan biaya logistik reguler.
+                                </li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section className="return-help-box">
+                        <div className="help-content-left">
+                            <h3>Masih Memiliki Pertanyaan Mengenai Pengembalian?</h3>
+                            <p>Tim Customer Support kami siap membantu peninjauan kasus Anda dari Senin hingga Minggu, pukul 09:00 - 21:00 WIB.</p>
+                        </div>
+                        <div className="help-content-right">
+                            <Link href={route('contact.create')} className="btn-primary">Hubungi Layanan CS</Link>
+                            <Link href="/term-condition" className="btn-outline-white">Syarat &amp; Ketentuan</Link>
+                        </div>
+                    </section>
                 </div>
-            </div>
+            </main>
         </AppLayout>
     );
 }

@@ -40,7 +40,7 @@ class CategoryPageController extends Controller
             ->paginate(12)
             ->withQueryString() // penting supaya q & sort tetap ada di pagination link
             ->through(function ($product) {
-                $product->thumb_url = $product->mainImage?->path ?? $product->image_url ?? null;
+                $product->thumb_url = $product->mainImage?->url ?? $product->image_url ?? null;
                 return $product;
             });
 

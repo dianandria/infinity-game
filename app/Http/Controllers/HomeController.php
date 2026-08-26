@@ -12,7 +12,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categoryOrder = ['Jepang', 'Korea', 'China', 'Thailand', 'Eropa', 'Lainnya'];
+        $categoryOrder = ['Xbox', 'Playstation', 'Nintendo', 'Blu-Ray & Movie', 'Video Games', 'Voucher Games'];
 
         $sliders = Slider::where('is_active', true)
             ->where('placement', 'home')

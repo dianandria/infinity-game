@@ -24,6 +24,7 @@ class ProductFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name) . '-' . Str::random(5),
+            'sku' => strtoupper(Str::random(8)),
             'description' => $this->faker->sentence(12),
             'price' => $this->faker->numberBetween(10000, 250000),
             'stock' => $this->faker->numberBetween(0, 120),

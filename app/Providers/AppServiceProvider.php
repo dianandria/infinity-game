@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Share category to all views
         Inertia::share('headerCategories', function () {
-            $categoryOrder = ['Jepang', 'Korea', 'China', 'Thailand', 'Eropa', 'Lainnya'];
+            $categoryOrder = ['Xbox', 'Playstation', 'Nintendo', 'Blu-Ray & Movie', 'Video Games', 'Voucher Games'];
 
             return Category::whereIn('name', $categoryOrder)
                 ->get(['id', 'name', 'slug'])

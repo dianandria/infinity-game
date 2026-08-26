@@ -17,15 +17,13 @@ export default function Checkout() {
     postal_code: prefill?.postal_code || '',
     notes: '',
     district_id: prefill?.district_id || '',
-    payment_method: '',   // ex: 'va', 'qris', 'cod'
-    payment_channel: '',   // ex: 'bri', 'bca', 'cod'
-    shipping_code: '',     // misal 'jne'
-    shipping_service: '' // misal 'REG'
+    payment_method: '',
+    payment_channel: '',
+    shipping_code: '',
+    shipping_service: ''
   })
 
   const [processing, setProcessing] = useState(false)
-
-  // group yang lagi kebuka di accordion
   const [openGroup, setOpenGroup] = useState(methods?.[0]?.Code || null);
 
   const onChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
@@ -36,7 +34,7 @@ export default function Checkout() {
 
     const payload = {
       ...form,
-      payment_fee: paymentFee || 0, // 👉 lempar fee di sini
+      payment_fee: paymentFee || 0,
     };
 
     router.post('/checkout', payload, {
@@ -45,11 +43,9 @@ export default function Checkout() {
     });
   };
 
-  // City & districts state
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
 
-  // Selected province and city state
   const [selectedProvinceId, setSelectedProvinceId] = useState(prefill?.province_id || "");
   const [selectedCityId, setSelectedCityId] = useState(prefill?.city_id || "");
   const [selectedDistrictId, setSelectedDistrictId] = useState(prefill?.district_id || "");
@@ -74,18 +70,16 @@ export default function Checkout() {
     loadSavedLocations();
   }, [prefill?.city_id, prefill?.province_id]);
 
-  // Mengambil kota berdasarkan provinsi yang dipilih
   const fetchCities = async (provinceId) => {
     try {
       const response = await axios.get(`/cities/${provinceId}`);
       setCities(response.data);
-      setDistricts([]); // Reset district selection
+      setDistricts([]);
     } catch (error) {
       console.error("Error fetching cities:", error);
     }
   };
 
-  // Mengambil kecamatan berdasarkan kota yang dipilih
   const fetchDistricts = async (cityId) => {
     try {
       const response = await axios.get(`/districts/${cityId}`);
@@ -95,27 +89,25 @@ export default function Checkout() {
     }
   };
 
-  // Handle perubahan provinsi
   const handleProvinceChange = (e) => {
-  const id = e.target.value;
-  const prov = provinces.find(p => String(p.id) === String(id));
+    const id = e.target.value;
+    const prov = provinces.find(p => String(p.id) === String(id));
 
-  setSelectedProvinceId(id);
-  setSelectedCityId("");
-  setSelectedDistrictId("");
+    setSelectedProvinceId(id);
+    setSelectedCityId("");
+    setSelectedDistrictId("");
 
-  setForm(prev => ({
-    ...prev,
-    province: prov?.name || "", // ✅ nama
-    city: "",
-    district: "",
-    district_id: "",
-  }));
+    setForm(prev => ({
+      ...prev,
+      province: prov?.name || "",
+      city: "",
+      district: "",
+      district_id: "",
+    }));
 
-  fetchCities(id);
-};
+    fetchCities(id);
+  };
 
-  // Handle perubahan kota
   const handleCityChange = (e) => {
     const id = e.target.value;
     const city = cities.find(c => String(c.id) === String(id));
@@ -133,7 +125,6 @@ export default function Checkout() {
     fetchDistricts(id);
   };
 
-  // Handle perubahan kota
   const handleDistrictChange = (e) => {
     const id = e.target.value;
     const district = districts.find(d => String(d.id) === String(id));
@@ -147,22 +138,19 @@ export default function Checkout() {
     }));
   };
 
-  // SHIPPING COST
   const [shippingCost, setShippingCost] = useState(null);
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
   const [shippingError, setShippingError] = useState(null);
-  const [shippingOptions, setShippingOptions] = useState([]);   // list jasa kirim
-  const [selectedShipping, setSelectedShipping] = useState(null); // yang dipilih
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [selectedShipping, setSelectedShipping] = useState(null);
 
-  // misal dari backend / props
-  const ORIGIN_ID = 449;          // id origin (gudang/toko)
-  const TOTAL_WEIGHT = 1000;       // dalam gram, sesuaikan dari cart
-  const COURIER = 'jne:sicepat:jnt:tiki'; // contoh, sesuaikan
+  const ORIGIN_ID = 449;
+  const TOTAL_WEIGHT = 1000;
+  const COURIER = 'jne:sicepat:jnt:tiki';
 
   const calculateShipping = async () => {
-    // pastikan data minimal sudah ada
     if (!selectedDistrictId) {
-      setShippingError('Mohon pilih district terlebih dahulu.');
+      setShippingError('Mohon pilih kecamatan terlebih dahulu.');
       return;
     }
 
@@ -172,7 +160,7 @@ export default function Checkout() {
     try {
       const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-      const res = await fetch('/shipping/calculate-cost', { // sesuaikan dengan route kamu
+      const res = await fetch('/shipping/calculate-cost', {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -183,7 +171,7 @@ export default function Checkout() {
         },
         body: JSON.stringify({
           origin: ORIGIN_ID,
-          destination: selectedDistrictId,   // district id dari select
+          destination: selectedDistrictId,
           weight: TOTAL_WEIGHT,
           courier: COURIER,
           price: 'lowest',
@@ -193,24 +181,21 @@ export default function Checkout() {
       if (!res.ok) {
         throw new Error('Gagal menghitung ongkir');
       }
-      
+
       const data = await res.json();
-      
       const options = data?.data || [];
       setShippingOptions(options);
 
-      // Default: pilih yang pertama / termurah
       if (options.length > 0) {
         setSelectedShipping(options[0]);
         setShippingCost(options[0].cost);
-       
+
         setForm(f => ({
           ...f,
-          shipping_code: options[0].code,      // misal: 'tiki'
-          shipping_service: options[0].service // misal: 'ECO'
+          shipping_code: options[0].code,
+          shipping_service: options[0].service
         }));
       }
-
     } catch (err) {
       console.error(err);
       setShippingError(err.message || 'Terjadi kesalahan saat hitung ongkir.');
@@ -219,346 +204,199 @@ export default function Checkout() {
     }
   };
 
-  // COUNT TOTAL
   const getTotal = () => {
     const subtotal = Number(cart.subtotal) || 0;
     const shipping = Number(shippingCost) || 0;
-    const discount = Number(cart.discount) || 0; // kalau ga ada, akan jadi 0
+    const discount = Number(cart.discount) || 0;
 
     return subtotal + shipping - discount + paymentFee;
   };
 
-  // PAYMENT FEE
   const [selectedPaymentChannel, setSelectedPaymentChannel] = useState(null);
   const getPaymentFee = () => {
-  if (!selectedPaymentChannel) return 0;
+    if (!selectedPaymentChannel) return 0;
 
-  const feeObj = selectedPaymentChannel.TransactionFee || {};
-  const feeValue = Number(feeObj.ActualFee) || 0;
-  const feeType  = feeObj.ActualFeeType; // 'PERCENT' atau misalnya 'FIXED'
+    const feeObj = selectedPaymentChannel.TransactionFee || {};
+    const feeValue = Number(feeObj.ActualFee) || 0;
+    const feeType  = feeObj.ActualFeeType;
 
-  if (!feeValue || !feeType) return 0;
+    if (!feeValue || !feeType) return 0;
 
-  // dasar perhitungan fee = subtotal + shipping - discount
-  const subtotal = Number(cart.subtotal) || 0;
-  const shipping = Number(shippingCost) || 0;
-  const discount = Number(cart.discount) || 0;
+    const subtotal = Number(cart.subtotal) || 0;
+    const shipping = Number(shippingCost) || 0;
+    const discount = Number(cart.discount) || 0;
 
-  const baseAmount = subtotal + shipping - discount;
+    const baseAmount = subtotal + shipping - discount;
 
-  // Percent (contoh: QRIS 0.7%)
-  if (feeType === 'PERCENT') {
-    // 0.7% → 0.7 / 100
-    const fee = (baseAmount * feeValue) / 100;
-    // biasanya gateway dibuletin ke atas
-    return Math.ceil(fee);
-  }
+    if (feeType === 'PERCENT') {
+      const fee = (baseAmount * feeValue) / 100;
+      return Math.ceil(fee);
+    }
 
-  // Selain PERCENT kita anggap FIXED / NOMINAL (VA Rp 3.500 / Rp 4.000)
-  return feeValue;
-};
+    return feeValue;
+  };
 
-const paymentFee = getPaymentFee();
+  const paymentFee = getPaymentFee();
 
   return (
     <AppLayout>
-      <Head title="Checkout" />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <h1 className="mb-4 text-2xl font-bold text-gray-800">Checkout</h1>
+      <Head title="Checkout - Infinity Game" />
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* FORM */}
-          <form onSubmit={submit} className="space-y-4 md:col-span-2">
-            <div className="rounded-2xl border bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-lg font-semibold text-black">Customer</h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label className="text-sm text-black">Name</label>
-                  <input name="name" value={form.name} onChange={onChange}
-                    className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800"
-                    required
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-500">{errors.name}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">Email</label>
-                  <input name="email" type="email" value={form.email} onChange={onChange}
-                         className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800" required/>
-                  {errors.email && (
-                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">Phone</label>
-                  <input name="phone" value={form.phone} onChange={onChange}
-                         className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800" required/>
-                  {errors.phone && (
-                    <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
-                  )}
+      <main className="checkout-page">
+        <div className="checkout-container">
+          <h2 className="checkout-title">Checkout Pesanan</h2>
+
+          <form onSubmit={submit} className="checkout-layout">
+            <div className="checkout-billing-details">
+              {/* 1. DATA PEMESAN */}
+              <div className="checkout-card">
+                <h3 className="card-section-title">1. Data Pemesan</h3>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="name">Nama Lengkap *</label>
+                    <input id="name" name="name" value={form.name} onChange={onChange} placeholder="Masukkan nama lengkap" required />
+                    {errors.name && <p className="field-error">{errors.name}</p>}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="phone">Nomor WhatsApp/Telepon *</label>
+                    <input id="phone" name="phone" value={form.phone} onChange={onChange} placeholder="Contoh: 081234567xxx" required />
+                    {errors.phone && <p className="field-error">{errors.phone}</p>}
+                  </div>
+                  <div className="form-group full-width">
+                    <label htmlFor="email">Alamat Email *</label>
+                    <input id="email" name="email" type="email" value={form.email} onChange={onChange} placeholder="alamatemail@gmail.com" required />
+                    {errors.email && <p className="field-error">{errors.email}</p>}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="rounded-2xl border bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-lg font-semibold text-black">Shipping Address</h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className="text-sm text-black">Address</label>
-                  <input name="address" value={form.address} onChange={onChange}
-                         className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800" required/>
-                  {errors.address && (
-                    <p className="mt-1 text-sm text-red-500">{errors.address}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">Province</label>
-                  <select 
-                    name="province"
-                    value={selectedProvinceId || ""}
-                    onChange={(e) => {
-                      handleProvinceChange(e);
-                    }}
-                    className='mt-1 w-full rounded-xl border px-3 py-2 text-gray-800'
-                    required
-                    >
-                    <option value="">Select province</option>
-                    {provinces.map((prov) => (
-                      <option key={prov.id} value={prov.id}>
-                        {prov.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.province && (
-                    <p className="mt-1 text-sm text-red-500">{errors.province}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">City</label>
-                  <select 
-                    name="city"
-                    value={selectedCityId || ""}
-                    onChange={(e) => {
-                      handleCityChange(e);
-                    }}
-                    className='mt-1 w-full rounded-xl border px-3 py-2 text-gray-800'
-                    required
-                    >
-                    <option value="">Select city</option>
-                    {cities.map((city) => (
-                      <option key={city.id} value={city.id}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.city && (
-                    <p className="mt-1 text-sm text-red-500">{errors.city}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">District</label>
-                  <select 
-                    name="district"
-                    value={selectedDistrictId || ""}
-                    onChange={handleDistrictChange}
-                    className='mt-1 w-full rounded-xl border px-3 py-2 text-gray-800'
-                    required
-                    >
-                    <option value="">Select district</option>
-                    {districts.map((district) => (
-                      <option key={district.id} value={district.id}>
-                        {district.name}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.district && (
-                    <p className="mt-1 text-sm text-red-500">{errors.district}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="text-sm text-black">Postal Code</label>
-                  <input name="postal_code" value={form.postal_code} onChange={onChange}
-                         className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800" required/>
-                  {errors.postal_code && (
-                    <p className="mt-1 text-sm text-red-500">{errors.postal_code}</p>
-                  )}
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="text-sm text-black">Notes (optional)</label>
-                  <textarea name="notes" value={form.notes} onChange={onChange}
-                            className="mt-1 w-full rounded-xl border px-3 py-2 text-gray-800" rows={3} />
+              {/* 2. ALAMAT PENGIRIMAN */}
+              <div className="checkout-card">
+                <h3 className="card-section-title">2. Alamat Pengiriman</h3>
+                <div className="form-grid">
+                  <div className="form-group full-width">
+                    <label htmlFor="address">Alamat Lengkap (Nama Jalan, No. Rumah, RT/RW) *</label>
+                    <textarea id="address" name="address" rows={3} value={form.address} onChange={onChange} placeholder="Masukkan alamat lengkap pengiriman" required />
+                    {errors.address && <p className="field-error">{errors.address}</p>}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="province">Provinsi *</label>
+                    <select id="province" name="province" value={selectedProvinceId || ""} onChange={handleProvinceChange} required>
+                      <option value="">-- Pilih Provinsi --</option>
+                      {provinces.map((prov) => (
+                        <option key={prov.id} value={prov.id}>{prov.name}</option>
+                      ))}
+                    </select>
+                    {errors.province && <p className="field-error">{errors.province}</p>}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="city">Kota / Kabupaten *</label>
+                    <select id="city" name="city" value={selectedCityId || ""} onChange={handleCityChange} required>
+                      <option value="">-- Pilih Kota --</option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.id}>{city.name}</option>
+                      ))}
+                    </select>
+                    {errors.city && <p className="field-error">{errors.city}</p>}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="district">Kecamatan *</label>
+                    <select id="district" name="district" value={selectedDistrictId || ""} onChange={handleDistrictChange} required>
+                      <option value="">-- Pilih Kecamatan --</option>
+                      {districts.map((district) => (
+                        <option key={district.id} value={district.id}>{district.name}</option>
+                      ))}
+                    </select>
+                    {errors.district && <p className="field-error">{errors.district}</p>}
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="postal_code">Kode Pos *</label>
+                    <input id="postal_code" name="postal_code" value={form.postal_code} onChange={onChange} placeholder="Contoh: 40132" required />
+                    {errors.postal_code && <p className="field-error">{errors.postal_code}</p>}
+                  </div>
+                  <div className="form-group full-width">
+                    <label htmlFor="notes">Catatan Pesanan (Opsional)</label>
+                    <textarea id="notes" name="notes" rows={2} value={form.notes} onChange={onChange} placeholder="Catatan khusus mengenai pengiriman atau produk" />
+                  </div>
                 </div>
               </div>
-              
-              <div className="sm:col-span-2 mt-3">
-                <button
-                  type="button"
-                  onClick={calculateShipping}
-                  className="rounded-xl border px-3 py-2 text-sm font-medium bg-gray-900"
-                >
-                  {isLoadingShipping ? 'Memilih jasa kirim...' : 'Pilih jasa kirim'}
+
+              {/* 3. PENGIRIMAN & PEMBAYARAN */}
+              <div className="checkout-card">
+                <h3 className="card-section-title">3. Pengiriman &amp; Pembayaran</h3>
+
+                <button type="button" onClick={calculateShipping} className="btn-outline-small">
+                  {isLoadingShipping ? 'Menghitung ongkir...' : 'Hitung & Pilih Jasa Kirim'}
                 </button>
-                
-                {errors.shipping_service && (
-                  <p className="mt-1 text-sm text-red-500">{errors.shipping_service}</p>
-                )}
 
-                {shippingError && (
-                  <p className="mt-1 text-sm text-red-500">{shippingError}</p>
-                )}
+                {errors.shipping_service && <p className="field-error">{errors.shipping_service}</p>}
+                {shippingError && <p className="field-error">{shippingError}</p>}
 
                 {shippingOptions.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    <p className="text-sm font-semibold text-black">
-                      Pilih jasa pengiriman
-                    </p>
-
+                  <div className="shipping-options">
                     {shippingOptions.map((opt) => (
-                      <label
-                        key={`${opt.code}-${opt.service}`}
-                        className="flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-sm cursor-pointer text-gray-900"
-                      >
-                        <div className="flex items-start gap-2">
+                      <label key={`${opt.code}-${opt.service}`} className="shipping-option">
+                        <div className="shipping-option-left">
                           <input
                             type="radio"
                             name="shipping_service"
-                            value={`${opt.code}-${opt.service}`}
-                            checked={
-                              selectedShipping &&
-                              selectedShipping.code === opt.code &&
-                              selectedShipping.service === opt.service
-                            }
+                            checked={selectedShipping && selectedShipping.code === opt.code && selectedShipping.service === opt.service}
                             onChange={() => {
                               setSelectedShipping(opt);
-                              setShippingCost(opt.cost); // update biaya & total
-
-                              setForm(f => ({
-                                ...f,
-                                shipping_code: opt.code,      // contoh: 'jne'
-                                shipping_service: opt.service // contoh: 'REG'
-                              }));
+                              setShippingCost(opt.cost);
+                              setForm(f => ({ ...f, shipping_code: opt.code, shipping_service: opt.service }));
                             }}
-                            className="mt-1"
                           />
                           <div>
-                            <div className="font-medium">
-                              {opt.name} — {opt.service}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {opt.description} · Estimasi {opt.etd}
-                            </div>
+                            <div className="shipping-option-name">{opt.name} &mdash; {opt.service}</div>
+                            <div className="shipping-option-desc">{opt.description} &middot; Estimasi {opt.etd}</div>
                           </div>
                         </div>
-
-                        <div className="text-sm font-semibold">
-                          Rp {opt.cost.toLocaleString('id-ID')}
-                        </div>
+                        <div className="shipping-option-price">Rp {opt.cost.toLocaleString('id-ID')}</div>
                       </label>
                     ))}
                   </div>
                 )}
 
-                {shippingCost !== null && !shippingError && (
-                  <p className="mt-2 text-sm text-gray-700">
-                    Ongkir terpilih: <span className="font-semibold">
-                      Rp {shippingCost.toLocaleString('id-ID')}
-                    </span>
-                  </p>
+                <h4 className="payment-subtitle">Metode Pembayaran *</h4>
+                {errors.payment_method && <p className="field-error">{errors.payment_method}</p>}
+                {methods.length === 0 && (
+                  <p className="muted-text">Metode pembayaran belum tersedia. Silakan coba beberapa saat lagi.</p>
                 )}
-              </div>
-            </div>
 
-            <div className="flex items-center gap-3">
-              <Link href="/cart" className="rounded-xl border px-4 py-2 text-gray-800">Back to Cart</Link>
-              <button
-                className="rounded-xl bg-gray-900 px-4 py-2 font-semibold text-white hover:bg-black disabled:opacity-60"
-                disabled={processing}
-                type="submit"
-              >
-                {processing ? 'Processing…' : 'Place Order'}
-              </button>
-            </div>
-          </form>
+                {methods.length > 0 && (
+                  <div className="payment-groups">
+                    {methods.map(group => {
+                      const groupCode = group.Code;
+                      const groupName = group.Name;
+                      const channels  = group.Channels || [];
+                      const isOpen    = openGroup === groupCode;
 
-          {/* SUMMARY */}
-          <aside className="h-fit space-y-4">
-            {/* PAYMENT METHOD */}
-            <div className="rounded-2xl border bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-lg font-semibold text-black">Payment</h2>
-              <p className="text-sm text-gray-600">
-                Pilih metode pembayaran. Pembayaran akan diproses setelah menekan “Place Order”.
-              </p>
-              {errors.payment_method && (
-                <p className="mt-1 text-sm text-red-500">{errors.payment_method}</p>
-              )}
-              {methods.length === 0 && (
-                <p className="mt-3 text-sm text-gray-500">
-                  Metode pembayaran belum tersedia. Silakan coba beberapa saat lagi.
-                </p>
-              )}
-
-              {methods.length > 0 && (
-                <div className="mt-4 space-y-3">
-                  {methods.map(group => {
-                    const groupCode = group.Code;     // contoh: 'va'
-                    const groupName = group.Name;     // contoh: 'Virtual Account'
-                    const channels  = group.Channels || [];
-                    const isOpen    = openGroup === groupCode;
-
-                    return (
-                      <div
-                        key={groupCode}
-                        className="overflow-hidden rounded-xl border border-gray-200 bg-white"
-                      >
-                        {/* HEADER ACCORDION */}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setOpenGroup(prev => (prev === groupCode ? null : groupCode))
-                          }
-                          className="flex w-full items-center justify-between px-3 py-2 text-left hover:bg-gray-50"
-                        >
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {groupName}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {channels.length} channel tersedia
-                            </div>
-                          </div>
-                          <span
-                            className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-xs transition-transform ${
-                              isOpen ? 'rotate-90' : ''
-                            }`}
+                      return (
+                        <div key={groupCode} className="payment-group">
+                          <button
+                            type="button"
+                            onClick={() => setOpenGroup(prev => (prev === groupCode ? null : groupCode))}
+                            className="payment-group-header"
                           >
-                            ▶
-                          </span>
-                        </button>
+                            <div>
+                              <div className="payment-group-name">{groupName}</div>
+                              <div className="payment-group-count">{channels.length} channel tersedia</div>
+                            </div>
+                            <span className={`payment-group-arrow ${isOpen ? 'open' : ''}`}>&#9654;</span>
+                          </button>
 
-                        {/* BODY ACCORDION */}
-                        {isOpen && channels.length > 0 && (
-                          <div className="border-t border-gray-200 bg-gray-50 px-3 py-2">
-                            <div className="space-y-2">
+                          {isOpen && channels.length > 0 && (
+                            <div className="payment-channels">
                               {channels.map(ch => {
-                                const channelCode = ch.Code;  // ex: 'bri'
-                                const channelName = ch.Name;  // ex: 'BRI'
-
-                                const isSelected =
-                                  form.payment_method === groupCode &&
-                                  form.payment_channel === channelCode;
-
-                                const disabled =
-                                  ch.FeatureStatus !== 'active' ||
-                                  ch.HealthStatus !== 'online';
-
-                                const feeObj   = ch.TransactionFee || {};
-                                const feeLabel =
-                                  feeObj.ActualFee != null
-                                    ? feeObj.ActualFeeType === 'PERCENT'
-                                      ? `${feeObj.ActualFee}%`
-                                      : `Rp ${Number(feeObj.ActualFee).toLocaleString('id-ID')}`
-                                    : null;
+                                const channelCode = ch.Code;
+                                const channelName = ch.Name;
+                                const isSelected = form.payment_method === groupCode && form.payment_channel === channelCode;
+                                const disabled = ch.FeatureStatus !== 'active' || ch.HealthStatus !== 'online';
+                                const feeObj = ch.TransactionFee || {};
+                                const feeLabel = feeObj.ActualFee != null
+                                  ? (feeObj.ActualFeeType === 'PERCENT' ? `${feeObj.ActualFee}%` : `Rp ${Number(feeObj.ActualFee).toLocaleString('id-ID')}`)
+                                  : null;
 
                                 return (
                                   <button
@@ -567,117 +405,86 @@ const paymentFee = getPaymentFee();
                                     disabled={disabled}
                                     onClick={() => {
                                       if (disabled) return;
-                                      setForm(f => ({
-                                        ...f,
-                                        payment_method: groupCode,   // 'va', 'qris', 'cod'
-                                        payment_channel: channelCode // 'bri', 'bca', 'cod'
-                                      }));
-
-                                      // simpan seluruh data channel yang dipilih
+                                      setForm(f => ({ ...f, payment_method: groupCode, payment_channel: channelCode }));
                                       setSelectedPaymentChannel(ch);
                                     }}
-                                    className={[
-                                      'flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition',
-                                      disabled
-                                        ? 'bg-gray-100 opacity-60 cursor-not-allowed'
-                                        : 'bg-white hover:border-blue-500 hover:bg-blue-50',
-                                      isSelected
-                                        ? 'border-blue-500 ring-1 ring-blue-200'
-                                        : 'border-gray-200',
-                                    ].join(' ')}
+                                    className={`payment-channel ${isSelected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
                                   >
-                                    {ch.Logo && (
-                                      <img
-                                        src={ch.Logo}
-                                        alt={channelName}
-                                        className="h-8 w-8 flex-shrink-0 object-contain"
-                                      />
-                                    )}
-
-                                    <div className="flex-1">
-                                      <div className="font-medium text-gray-900">
-                                        {channelName}
-                                      </div>
-                                      <div className="text-xs text-gray-500">
-                                        {feeLabel
-                                          ? `Biaya ${feeLabel}`
-                                          : 'Tanpa biaya tambahan'}
-                                      </div>
-                                      {ch.HealthStatus === 'online' && !disabled && (
-                                        <div className="mt-1 text-[10px] text-green-600">
-                                          Channel online
-                                        </div>
-                                      )}
+                                    {ch.Logo && <img src={ch.Logo} alt={channelName} className="payment-channel-logo" />}
+                                    <div className="payment-channel-info">
+                                      <div className="payment-channel-name">{channelName}</div>
+                                      <div className="payment-channel-fee">{feeLabel ? `Biaya ${feeLabel}` : 'Tanpa biaya tambahan'}</div>
                                     </div>
-
-                                    <span
-                                      className={[
-                                        'inline-flex h-4 w-4 items-center justify-center rounded-full border-2',
-                                        isSelected
-                                          ? 'border-blue-500 bg-blue-500'
-                                          : 'border-gray-300 bg-white',
-                                      ].join(' ')}
-                                    />
+                                    <span className={`payment-channel-radio ${isSelected ? 'selected' : ''}`} />
                                   </button>
                                 );
                               })}
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* SUMMARY */}
-            <div className="rounded-2xl border bg-white p-4 shadow-sm">
-              <h2 className="mb-3 text-lg font-semibold text-black">Summary</h2>
-              <div className="space-y-2 text-sm text-black">
-                {cart.items.map(it => (
-                  <div key={it.product_id} className="flex justify-between">
-                    <span className="line-clamp-1">{it.name} × {it.qty}</span>
-                    <span>{fmt(it.subtotal)}</span>
-                  </div>
-                ))}
-                <hr className="my-2" />
-                <div className="flex justify-between text-black">
-                  <span>Subtotal</span>
-                  <span>{fmt(cart.subtotal)}</span>
+            <div className="checkout-summary-wrapper">
+              <div className="checkout-summary-card">
+                <h3>Ringkasan Pesanan</h3>
+
+                <div className="checkout-mini-products">
+                  {cart.items.map(it => (
+                    <div key={it.product_id} className="mini-product-item">
+                      <img src={it.image_url || '/images/about-us.jpg'} alt={it.name} className="mini-img" />
+                      <div className="mini-info">
+                        <h4 className="mini-name">{it.name}</h4>
+                        <span className="mini-qty-price">{it.qty} &times; {fmt(it.price)}</span>
+                      </div>
+                      <span className="mini-total-price">{fmt(it.subtotal)}</span>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="flex justify-between text-black">
-                  <span>Shipping</span>
-                  <span>{shippingCost != null ? fmt(shippingCost) : '—'}</span>
+                <div className="checkout-calc-details">
+                  <div className="calc-row">
+                    <span className="calc-label">Subtotal Produk</span>
+                    <span className="calc-value">{fmt(cart.subtotal)}</span>
+                  </div>
+                  <div className="calc-row">
+                    <span className="calc-label">Biaya Kirim</span>
+                    <span className="calc-value">{shippingCost != null ? fmt(shippingCost) : '—'}</span>
+                  </div>
+                  {!!cart.discount && (
+                    <div className="calc-row">
+                      <span className="calc-label">Diskon</span>
+                      <span className="calc-value">-{fmt(cart.discount)}</span>
+                    </div>
+                  )}
+                  {paymentFee > 0 && (
+                    <div className="calc-row">
+                      <span className="calc-label">Biaya Payment</span>
+                      <span className="calc-value">{fmt(paymentFee)}</span>
+                    </div>
+                  )}
+                  <hr className="calc-divider" />
+                  <div className="calc-row total-row">
+                    <span className="calc-label">Total Tagihan</span>
+                    <span className="calc-value-total">{fmt(getTotal())}</span>
+                  </div>
                 </div>
 
-                {!!cart.discount && (
-                  <div className="flex justify-between text-black">
-                    <span>Discount</span>
-                    <span>-{fmt(cart.discount)}</span>
-                  </div>
-                )}
+                <button type="submit" className="btn-place-order" disabled={processing}>
+                  {processing ? 'Memproses...' : 'Konfirmasi & Buat Pesanan'}
+                </button>
 
-                {paymentFee > 0 && (
-                  <div className="flex justify-between text-black">
-                    <span>Biaya payment method</span>
-                    <span>{fmt(paymentFee)}</span>
-                  </div>
-                )}
-
-                <div className="mt-2 flex justify-between text-base font-semibold">
-                  <span>Total</span>
-                  <span>
-                    {fmt(getTotal())}
-                  </span>
-                </div>
-
+                <Link href="/cart" className="back-to-cart">&larr; Kembali ke Keranjang</Link>
               </div>
             </div>
-          </aside>
+          </form>
         </div>
-      </div>
+      </main>
     </AppLayout>
   )
 }

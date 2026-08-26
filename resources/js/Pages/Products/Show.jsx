@@ -1,36 +1,45 @@
 import React, { useState } from 'react'
-import { Head, Link, usePage } from '@inertiajs/react'
+import { Head, Link, router, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
-import { router } from '@inertiajs/react'
-import { route } from 'ziggy-js'
 
-function Currency({ value }) {
-  return <>Rp {Number(value || 0).toLocaleString('id-ID')}</>
-}
+const fmt = (n) => `Rp ${Number(n || 0).toLocaleString('id-ID')}`
 
 function RelatedGrid({ items }) {
   if (!items?.length) return null
   return (
-    <section className="mt-10">
-      <h2 className="mb-4 text-lg font-semibold text-gray-800">Produk lainnya</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map(p => (
-          <Link key={p.id} href={route('products.show', p.slug)} className="rounded-2xl border bg-white shadow-sm hover:shadow-md">
-            <img className="aspect-square w-full object-cover rounded-t-2xl" src={p.image_url || 'https://via.placeholder.com/600'} alt={p.name} loading="lazy" />
-            <div className="p-3 rounded-b-2xl product-info">
-              <h3 className="line-clamp-1 font-semibold text-white">{p.name}</h3>
-              <div className='mt-auto flex items-center justify-between pt-2'>
-                <div className="text-sm text-white font-semibold"><Currency value={p.price} /></div>
-                <Link
-                  href={`/products/${p.slug}`}
-                  className="inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-primary hover:bg-gray-200"
-                >
-                  Lihat
-                </Link>
+    <section className="related-products-section">
+      <h2 className="section-title">Produk Terkait</h2>
+      <div className="product-grid">
+        {items.map((p) => {
+          const outOfStock = Number(p.stock) <= 0
+          return (
+            <div key={p.id} className="product-card">
+              {outOfStock && <span className="badge out-of-stock">Out of stock</span>}
+              <Link href={route('products.show', p.slug)} className="product-img">
+                <img src={p.image_url || '/images/about-us.jpg'} alt={p.name} loading="lazy" />
+              </Link>
+              <div className="card-body">
+                <span className="category">{p.categories?.[0]?.name || 'Game'}</span>
+                <h3 className="product-title">
+                  <Link href={route('products.show', p.slug)}>{p.name}</Link>
+                </h3>
+                <div className="card-footer">
+                  <span className="price">{fmt(p.price)}</span>
+                  <button
+                    type="button"
+                    className="btn-cart"
+                    disabled={outOfStock}
+                    onClick={() =>
+                      router.post(route('cart.store'), { product_id: p.id, qty: 1 }, { preserveScroll: true })
+                    }
+                  >
+                    {outOfStock ? 'Habis' : 'Add to cart'}
+                  </button>
+                </div>
               </div>
             </div>
-          </Link>
-        ))}
+          )
+        })}
       </div>
     </section>
   )
@@ -39,181 +48,126 @@ function RelatedGrid({ items }) {
 export default function Show() {
   const { product, related } = usePage().props
   const [qty, setQty] = useState(1)
-
-  const addToCart = () => {
-    router.post(route('cart.store'), { product_id: product.id, qty }, {
-      preserveScroll: true,
-    })
-  }
-
   const inStock = Number(product.stock) > 0
+  const category = product.categories?.[0]
 
-  // --- GALLERY STATE ---
   const images =
-  product.images?.length > 0
-    ? product.images.map((img) => img.url).filter(Boolean)
-    : product.image_url
-      ? [product.image_url]
-      : ['https://via.placeholder.com/900']
+    product.images?.length > 0
+      ? product.images.map((img) => img.url).filter(Boolean)
+      : product.image_url
+        ? [product.image_url]
+        : ['/images/about-us.jpg']
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  const goPrev = () => {
-    setCurrentImageIndex(prev =>
-      prev === 0 ? images.length - 1 : prev - 1
-    )
-  }
-
-  const goNext = () => {
-    setCurrentImageIndex(prev =>
-      prev === images.length - 1 ? 0 : prev + 1
-    )
+  const addToCart = () => {
+    router.post(route('cart.store'), { product_id: product.id, qty }, { preserveScroll: true })
   }
 
   return (
     <AppLayout>
-      <Head title={product.name}  />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-       {/* <Head>
-          <title>{product.name} – Catalog</title>
-          <meta name="description" content={(product.description || '').slice(0, 150)} />
-          <meta property="og:title" content={product.name} />
-          <meta property="og:description" content={(product.description || '').slice(0, 150)} />
-          <meta property="og:image" content={product.image_url || ''} />
-        </Head>*/}
+      <Head title={`${product.name} - Infinity Game`} />
 
-        {/* Breadcrumbs */}
-        <nav className="mb-4 text-sm text-gray-500">
-          <Link href={route('products.index')} className="hover:underline">Produk</Link>
-          <span className="mx-2">/</span>
-          <span className="text-gray-900">{product.name}</span>
-        </nav>
+      <main className="detail-page">
+        <div className="breadcrumb-detail">
+          <Link href={route('home.index')}>Home</Link> <span>/</span>
+          {category ? (
+            <>
+              <Link href={route('category.show', category.slug)}>{category.name}</Link> <span>/</span>
+            </>
+          ) : (
+            <>
+              <Link href={route('products.index')}>Produk</Link> <span>/</span>
+            </>
+          )}
+          <span className="current">{product.name}</span>
+        </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* IMAGE GALLERY */}
-          <div className="rounded-2xl border bg-white p-3 shadow-sm">
-            {/* Main image + arrows */}
-            <div className="relative">
-              <img
-                className="aspect-square w-full rounded-xl object-cover"
-                src={images[currentImageIndex]}
-                alt={product.name}
-              />
-
-              {images.length > 1 && (
-                <>
-                  {/* Left arrow */}
-                  <button
-                    type="button"
-                    onClick={goPrev}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 px-2 py-1 text-sm shadow hover:bg-white text-gray-800"
-                  >
-                    ‹
-                  </button>
-
-                  {/* Right arrow */}
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 px-2 py-1 text-sm shadow hover:bg-white text-gray-800"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnails */}
+        <section className="product-detail-section">
+          <div className="product-gallery">
+            <img src={images[currentImageIndex]} alt={product.name} />
             {images.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto">
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                 {images.map((img, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border ${
-                      idx === currentImageIndex
-                        ? ''
-                        : 'border-gray-200'
-                    }`}
+                    style={{
+                      border: idx === currentImageIndex ? '2px solid #8D0B3E' : '2px solid transparent',
+                      borderRadius: '8px',
+                      padding: 0,
+                      overflow: 'hidden',
+                      width: 64,
+                      height: 64,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <img
-                      src={img}
-                      alt={`${product.name} thumbnail ${idx + 1}`}
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Info */}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">{product.name}</h1>
+          <div className="product-info-detail">
+            <span className="category">{category?.name || 'Game'}</span>
+            <h1>{product.name}</h1>
+            <div className="price-large">{fmt(product.price)}</div>
 
-            <div className="mt-2 text-xl font-semibold text-gray-800">
-              <Currency value={product.price} />
+            <div className="product-description">
+              <p>{product.description || 'Belum ada deskripsi untuk produk ini.'}</p>
             </div>
 
-            <div className="mt-2">
-              {inStock ? (
-                <span className="inline-flex items-center rounded-md bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800">
-                  In stock: {product.stock}
-                </span>
-              ) : (
-                <span className="inline-flex items-center rounded-md bg-rose-100 px-2 py-1 text-xs font-medium text-rose-800">
-                  Out of stock
-                </span>
-              )}
-            </div>
-
-            <p className="prose prose-sm mt-4 max-w-none text-gray-700">
-              {product.description || 'No description.'}
-            </p>
-
-            {/* Qty + CTA */}
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center rounded-xl border background-primary h-[38px]">
+            <div className="action-area">
+              <div className="qty-wrapper">
                 <button
                   type="button"
-                  className="px-3 py-2"
-                  onClick={() => setQty(q => Math.max(1, q - 1))}
-                >−</button>
+                  className="btn-qty btn-qty-minus"
+                  onClick={() => setQty((q) => Math.max(1, q - 1))}
+                >
+                  -
+                </button>
                 <input
-                  className="w-14 border-x text-center outline-none text-gray-800 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none overflow-hidden h-[34px]"
                   type="number"
-                  min={1}
+                  className="qty-input"
                   value={qty}
-                  onChange={e => setQty(Math.max(1, Number(e.target.value) || 1))}
+                  min={1}
+                  onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))}
                 />
                 <button
                   type="button"
-                  className="px-3 py-2"
-                  onClick={() => setQty(q => q + 1)}
-                >+</button>
+                  className="btn-qty btn-qty-plus"
+                  onClick={() => setQty((q) => q + 1)}
+                >
+                  +
+                </button>
               </div>
-
               <button
+                type="button"
+                className="btn-add-large"
                 disabled={!inStock}
                 onClick={addToCart}
-                className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white
-                  ${inStock ? 'background-primary' : 'bg-gray-400 cursor-not-allowed'}
-                `}
               >
-                {inStock ? 'Add to cart' : 'Unavailable'}
+                {inStock ? 'Masukkan Keranjang' : 'Stok Habis'}
               </button>
             </div>
 
-            {/* Meta kecil */}
-            <div className="mt-3 text-xs text-gray-500">
-              SKU: #{product.id} • Secure checkout • Fast shipping
+            <div className="extra-info">
+              <span><strong>SKU:</strong> {product.sku || `INF-${product.id}`}</span>
+              <span><strong>Kategori:</strong> {category?.name || 'Game'}</span>
+              <span>
+                <strong>Status:</strong>{' '}
+                <span className="status-stock">
+                  {inStock ? 'Tersedia (In Stock)' : 'Habis (Out of Stock)'}
+                </span>
+              </span>
             </div>
           </div>
-        </div>
+        </section>
 
         <RelatedGrid items={related} />
-      </div>
+      </main>
     </AppLayout>
   )
 }

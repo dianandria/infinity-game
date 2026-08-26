@@ -17,10 +17,10 @@
             border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
             overflow: hidden; 
-            border-top: 6px solid #eb7a65; /* Warna Coral Aksen */
+            border-top: 6px solid #8D0B3E; /* Warna Coral Aksen */
         }
         .header { 
-            background-color: #32647a; /* Warna Biru Teal Utama */
+            background-color: #152341; /* Warna Biru Teal Utama */
             color: #ffffff; 
             padding: 30px 20px; 
             text-align: center; 
@@ -40,14 +40,14 @@
         }
         .payment-box { 
             background-color: #f8fafc; 
-            border-left: 5px solid #32647a; 
+            border-left: 5px solid #152341; 
             padding: 20px; 
             margin: 25px 0; 
             border-radius: 4px;
         }
         .payment-box h3 {
             margin-top: 0;
-            color: #32647a;
+            color: #152341;
             font-size: 18px;
             margin-bottom: 15px;
         }
@@ -56,12 +56,12 @@
             font-size: 15px;
         }
         .highlight-text {
-            color: #eb7a65;
+            color: #8D0B3E;
             font-weight: bold;
         }
         .section-title { 
             font-size: 18px; 
-            color: #32647a; 
+            color: #152341; 
             border-bottom: 2px solid #edf2f7; 
             padding-bottom: 8px; 
             margin-bottom: 15px; 
@@ -75,7 +75,7 @@
         }
         th { 
             background-color: #f0f4f6; 
-            color: #32647a; 
+            color: #152341; 
             font-weight: 600; 
             text-transform: uppercase; 
             font-size: 12px; 
@@ -93,7 +93,7 @@
             color: #2d3748;
         }
         .grand-total {
-            color: #eb7a65 !important;
+            color: #8D0B3E !important;
             font-size: 16px;
             font-weight: bold;
         }
@@ -183,7 +183,7 @@
         </div>
 
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Twighouse Souvenir. Semua hak dilindungi.</p>
+            <p>&copy; {{ date('Y') }} Infinity Game. Semua hak dilindungi.</p>
         </div>
     </div>
 </body>

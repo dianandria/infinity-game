@@ -1,8 +1,4 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
+import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
@@ -22,99 +18,91 @@ export default function Register() {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Register" />
+        <AppLayout>
+            <Head title="Daftar Akun - Infinity Game" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+            <main className="login-section">
+                <div className="login-container">
+                    <div className="login-header">
+                        <h2>Buat Akun Baru</h2>
+                        <p>Bergabunglah dengan komunitas Infinity Game!</p>
+                    </div>
 
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
+                    <form className="login-form" onSubmit={submit}>
+                        <div className="form-group">
+                            <label htmlFor="name">Nama Lengkap</label>
+                            <input
+                                id="name"
+                                name="name"
+                                className="form-control"
+                                placeholder="Masukkan nama Anda"
+                                value={data.name}
+                                autoComplete="name"
+                                autoFocus
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                            />
+                            {errors.name && <p className="field-error">{errors.name}</p>}
+                        </div>
 
-                    <InputError message={errors.name} className="mt-2" />
+                        <div className="form-group">
+                            <label htmlFor="email">Email</label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                className="form-control"
+                                placeholder="Masukkan email Anda"
+                                value={data.email}
+                                autoComplete="username"
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                            />
+                            {errors.email && <p className="field-error">{errors.email}</p>}
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                className="form-control"
+                                placeholder="Buat password"
+                                value={data.password}
+                                autoComplete="new-password"
+                                onChange={(e) => setData('password', e.target.value)}
+                                required
+                            />
+                            {errors.password && <p className="field-error">{errors.password}</p>}
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="password_confirmation">Konfirmasi Password</label>
+                            <input
+                                id="password_confirmation"
+                                type="password"
+                                name="password_confirmation"
+                                className="form-control"
+                                placeholder="Ulangi password Anda"
+                                value={data.password_confirmation}
+                                autoComplete="new-password"
+                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                required
+                            />
+                            {errors.password_confirmation && <p className="field-error">{errors.password_confirmation}</p>}
+                        </div>
+
+                        <button type="submit" className="btn-login btn-login-mt" disabled={processing}>
+                            {processing ? 'Memproses...' : 'Daftar'}
+                        </button>
+                    </form>
+
+                    <div className="login-footer">
+                        <p>Sudah punya akun? <Link href={route('login')}>Masuk di sini</Link></p>
+                    </div>
                 </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        required
-                    />
-
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Sudah punya akun?
-                    </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Daftar
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+            </main>
+        </AppLayout>
     );
 }

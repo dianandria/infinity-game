@@ -48,7 +48,7 @@ export default function PayWithIpaymu({ order, ipaymu }) {
 
     return (
         <AppLayout>
-            <Head title={`Pembayaran ${channel} - Twighouse`} />
+            <Head title={`Pembayaran ${channel} - Infinity Game`} />
 
             <div className="bg-gray-50 min-h-screen py-16 px-4">
                 <div className="mx-auto max-w-xl">

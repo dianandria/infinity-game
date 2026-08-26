@@ -99,4 +99,45 @@ Route::middleware([])->group(function () {
         ->name('shipping.calculate-cost');
 });
 
+/**
+ * Admin (guard admin)
+ */
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest.admin')->group(function () {
+        Route::get('/login', [AdminAuthenticatedSessionController::class, 'create'])->name('login');
+        Route::post('/login', [AdminAuthenticatedSessionController::class, 'store'])->name('login.store');
+    });
+
+    Route::middleware('auth:admin')->group(function () {
+        Route::get('/dashboard', function () {
+            return redirect('/admin/orders');
+        })->name('dashboard');
+
+        Route::post('/logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+        // Product & Categories
+        Route::resource('products', AdminProductController::class);
+        Route::delete('/admin/products/batch', [AdminProductController::class, 'batchDestroy'])
+            ->name('products.batchDestroy');
+        Route::post('/admin/products/import', [AdminProductController::class, 'importExcel'])
+            ->name('products.importExcel');
+
+        Route::resource('categories', CategoryController::class)->except('show');
+
+        // Order
+        Route::get('orders',           [OrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}',   [OrderController::class, 'show'])->name('orders.show');
+        Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+        Route::get('orders-export',    [OrderController::class, 'export'])->name('orders.export');
+        Route::post('/orders/{order}/shipping', [OrderController::class, 'updateShipping'])
+            ->name('orders.shipping');
+
+        // Slider
+        Route::resource('sliders', SliderController::class);
+
+        // Contact Message
+        Route::get('contact', [AdminContactController::class, 'index'])->name('contact');
+    });
+});
+
 require __DIR__.'/auth.php';
