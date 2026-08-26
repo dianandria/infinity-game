@@ -1,15 +1,12 @@
-// resources/js/Pages/Shop/Contact/Index.jsx
-
 import React from 'react'
 import { Head, useForm, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
-import PageSlider from '@/Components/PageSlider'
 
 export default function ContactIndex() {
   const { status, sliders = [] } = usePage().props
-  const mapQuery = 'Jl. Sukajadi No.127, Cipedes, Kec. Sukajadi, Kota Bandung, Jawa Barat 40162'
-  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`
-  const mapShareUrl = 'https://share.google/ALkdAHzXgK0X9jg6U'
+  const banner = sliders?.[0]?.image_path ? `/storage/${sliders[0].image_path}` : '/images/about-us.jpg'
+  const mapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.852346630734!2d107.6063609747569!3d-6.908252993091152!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e6380ff7472f%3A0x9fcc736a471f7565!2sINFINITY%20GAME!5e0!3m2!1sen!2sid!4v1781773496414!5m2!1sen!2sid'
+  const mapShareUrl = 'https://www.google.com/maps/place/INFINITY+GAME/@-6.908253,107.606361,17z'
 
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
@@ -22,200 +19,163 @@ export default function ContactIndex() {
 
   const onSubmit = (e) => {
     e.preventDefault()
-
     post(route('contact.store'), {
-      onSuccess: () => {
-        reset('message') // misal cuma reset pesan, atau reset() semua
-      },
+      onSuccess: () => reset('message'),
     })
   }
 
   return (
     <AppLayout>
-      <Head title="Hubungi Kami" />
-      <PageSlider sliders={sliders} />
+      <Head title="Kontak Kami - Infinity Game" />
 
-      <div className="mx-auto max-w-3xl px-4 py-10 lg:py-14">
-        
-      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 shadow-sm">
-      <div className="aspect-[16/9] w-full bg-gray-100">
-        <iframe
-          title="Lokasi Twig Souvenir"
-          src={mapEmbedUrl}
-          className="h-full w-full border-0"
-          loading="lazy"
-          allowFullScreen
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-        </div>
-        {/* Kotak Informasi Kontak (Atas) */}
-        <div className="space-y-6 rounded-2xl bg-gray-50 p-6 border border-gray-100 md:flex md:space-y-0 md:space-x-12">
-          {/* Alamat Toko */}
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">Toko Kami</h3>
-            <p className="mt-2 text-gray-600 leading-relaxed">
-              Jl. Sukajadi No.127, Cipedes<br />
-              Kec. Sukajadi, Kota Bandung<br />
-              Jawa Barat 40162
-            </p>
+      <main className="contact-page">
+        <div className="contact-banner-section">
+          <img src={banner} alt="Kontak Banner" className="banner-img" />
+          <div className="banner-overlay"></div>
+          <div className="banner-text">
+            <p>PUNYA PERTANYAAN ATAU BUTUH BANTUAN?</p>
+            <h1>Hubungi Kami</h1>
           </div>
+        </div>
 
+        <div className="contact-content">
+          <div className="contact-info-card">
+            <div className="map-container">
+              <iframe
+                title="Lokasi Infinity Game"
+                src={mapEmbedUrl}
+                width="550"
+                height="450"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
 
-          {/* Nomor Kontak */}
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">Kontak</h3>
-            <div className="mt-2 space-y-2 text-gray-600">
-              <p className="flex items-center">
-                <span className="font-medium text-gray-900 w-24">Telepon:</span> 
-                022 2037700
-              </p>
-              <p className="flex items-center">
-                <span className="font-medium text-gray-900 w-24">WhatsApp:</span> 
-                <a href="https://wa.me/6282130009900" target="_blank" rel="noreferrer" className="hover:text-gray-900 hover:underline">
-                  +62 821-3000-9900
+            <div className="info-details">
+              <div className="info-grid">
+                <div className="info-item">
+                  <h3>Alamat Toko Offline</h3>
+                  <p>
+                    Infinity Game Hub<br />
+                    Jl. Purnawarman No.13-15 L2 – B07, Babakan Ciamis, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40117
+                  </p>
+                </div>
+                <div className="info-item">
+                  <h3>Customer Support</h3>
+                  <p>
+                    <strong>WhatsApp:</strong> +62 811-2345-6789<br />
+                    <strong>Email:</strong> support@infinitygame.id<br />
+                    <strong>Telepon:</strong> (022) 420-1234
+                  </p>
+                </div>
+              </div>
+
+              <div className="info-bottom">
+                <div className="loc-text">
+                  <strong>Jam Operasional</strong>
+                  <p>Setiap Hari: 10:00 - 22:00 WIB</p>
+                </div>
+                <a href={mapShareUrl} target="_blank" rel="noreferrer" className="btn-primary">
+                  Buka di Maps
                 </a>
-              </p>
+              </div>
             </div>
           </div>
-        </div>
 
-       
-          <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">Lokasi Toko</h3>
-              <p className="mt-1 text-sm text-gray-600">{mapQuery}</p>
-            </div>
-            <a
-              href={mapShareUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-            >
-              Buka di Google Maps
-            </a>
+          <div className="form-divider">
+            <span>Atau Kirim Pesan</span>
           </div>
-        </div>
 
-        {/* Garis Pemisah */}
-        <div className="relative py-10">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-sm text-gray-500">Atau kirim pesan</span>
-          </div>
-        </div>
+          <div className="form-container">
+            {status && (
+              <div className="form-status-success">{status}</div>
+            )}
 
-        {/* Bagian Formulir (Bawah) */}
-        <div>
-          {status && (
-            <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-gray-800">
-              {status}
-            </div>
-          )}
-
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Nama Lengkap <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 text-gray-900"
-                value={data.name}
-                onChange={(e) => setData('name', e.target.value)}
-              />
-              {errors.name && (
-                <p className="mt-1 text-xs text-red-600">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 text-gray-900"
-                value={data.email}
-                onChange={(e) => setData('email', e.target.value)}
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">{errors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Nomor Telepon (opsional)
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 text-gray-900"
-                value={data.phone}
-                onChange={(e) => setData('phone', e.target.value)}
-              />
-              {errors.phone && (
-                <p className="mt-1 text-xs text-red-600">{errors.phone}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Subjek (opsional)
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 text-gray-900"
-                value={data.subject}
-                onChange={(e) => setData('subject', e.target.value)}
-              />
-              {errors.subject && (
-                <p className="mt-1 text-xs text-red-600">{errors.subject}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">
-                Pesan <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                rows={5}
-                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900 text-gray-900"
-                value={data.message}
-                onChange={(e) => setData('message', e.target.value)}
-              />
-              {errors.message && (
-                <p className="mt-1 text-xs text-red-600">{errors.message}</p>
-              )}
-            </div>
-
-            <div className="hidden">
-              <label>
-                Kosongkan kolom ini
+            <form onSubmit={onSubmit} className="contact-form">
+              <div className="form-group">
+                <label>Nama Lengkap <span className="required">*</span></label>
                 <input
                   type="text"
-                  name="website"
-                  autoComplete="off"
-                  onChange={(e) => setData('website', e.target.value)}
-                  value={data.website || ''}
+                  className="form-control"
+                  placeholder="Masukkan nama Anda"
+                  value={data.name}
+                  onChange={(e) => setData('name', e.target.value)}
+                  required
                 />
-              </label>
-            </div>
-              
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={processing}
-                className="inline-flex w-full justify-center items-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:px-8"
-              >
-                {processing ? 'Mengirim…' : 'Kirim Pesan'}
-              </button>
-            </div>
-          </form>
-        </div>
+                {errors.name && <p className="field-error">{errors.name}</p>}
+              </div>
 
-      </div>
+              <div className="form-group">
+                <label>Email <span className="required">*</span></label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Masukkan alamat email"
+                  value={data.email}
+                  onChange={(e) => setData('email', e.target.value)}
+                  required
+                />
+                {errors.email && <p className="field-error">{errors.email}</p>}
+              </div>
+
+              <div className="form-group">
+                <label>Nomor Telepon (opsional)</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="Contoh: 08123456789"
+                  value={data.phone}
+                  onChange={(e) => setData('phone', e.target.value)}
+                />
+                {errors.phone && <p className="field-error">{errors.phone}</p>}
+              </div>
+
+              <div className="form-group">
+                <label>Subjek (opsional)</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Perihal pesan"
+                  value={data.subject}
+                  onChange={(e) => setData('subject', e.target.value)}
+                />
+                {errors.subject && <p className="field-error">{errors.subject}</p>}
+              </div>
+
+              <div className="form-group full-width">
+                <label>Pesan <span className="required">*</span></label>
+                <textarea
+                  className="form-control"
+                  rows={5}
+                  placeholder="Tuliskan pertanyaan atau kendala Anda di sini..."
+                  value={data.message}
+                  onChange={(e) => setData('message', e.target.value)}
+                  required
+                ></textarea>
+                {errors.message && <p className="field-error">{errors.message}</p>}
+              </div>
+
+              <div style={{ display: 'none' }}>
+                <label>
+                  Kosongkan kolom ini
+                  <input
+                    type="text"
+                    name="website"
+                    autoComplete="off"
+                    value={data.website || ''}
+                    onChange={(e) => setData('website', e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <button type="submit" className="btn-primary full-width" disabled={processing}>
+                {processing ? 'Mengirim...' : 'Kirim Pesan Sekarang'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
     </AppLayout>
   )
 }

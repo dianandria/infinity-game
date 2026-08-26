@@ -2,29 +2,35 @@ import React from 'react'
 import { Head, Link, router, usePage } from '@inertiajs/react'
 import AppLayout from '@/Layouts/AppLayout'
 
-const fmt = (n) => `Rp ${Number(n||0).toLocaleString('id-ID')}`
+const fmt = (n) => `Rp ${Number(n || 0).toLocaleString('id-ID')}`
 
-function LineItem({ it }) {
+function CartItem({ it }) {
   const dec = () => router.patch(route('cart.update', it.product_id), { qty: Math.max(1, it.qty - 1) }, { preserveScroll: true })
   const inc = () => router.patch(route('cart.update', it.product_id), { qty: it.qty + 1 }, { preserveScroll: true })
   const removeIt = () => router.delete(route('cart.destroy', it.product_id), { preserveScroll: true })
-  
+
   return (
-    <div className="flex items-center gap-3 rounded-2xl border p-3">
-      <img src={it.image_url || 'https://via.placeholder.com/200'} alt={it.name} className="h-20 w-20 rounded-lg object-cover" />
-      <div className="flex-1">
-        <Link href={route('products.show', it.slug)} className="font-medium hover:underline line-clamp-1 text-gray-800">{it.name}</Link>
-        <div className="text-sm text-gray-500">Harga: {fmt(it.price)}</div>
-        <div className="mt-2 inline-flex items-center rounded-xl border bg-gray-800">
-          <button className="px-3 py-1" onClick={dec}>−</button>
-          <input className="w-12 border-x text-center text-gray-800" readOnly value={it.qty} />
-          <button className="px-3 py-1" onClick={inc}>+</button>
+    <div className="cart-item">
+      <img src={it.image_url || '/images/about-us.jpg'} alt={it.name} className="item-img" />
+      <div className="item-info">
+        <Link href={route('products.show', it.slug)} className="item-name">{it.name}</Link>
+        <p className="item-category">{it.category_name || 'Game'}</p>
+      </div>
+      <div className="item-qty-wrapper">
+        <div className="item-qty">
+          <button type="button" className="qty-btn minus" onClick={dec}>-</button>
+          <input type="text" value={it.qty} className="qty-input" readOnly />
+          <button type="button" className="qty-btn plus" onClick={inc}>+</button>
         </div>
       </div>
-      <div className="text-right">
-        <div className="font-semibold text-gray-800">{fmt(it.subtotal)}</div>
-        <button className="mt-2 text-sm text-rose-600 hover:underline" onClick={removeIt}>Remove</button>
+      <div className="item-price-wrapper">
+        <span className="item-price">{fmt(it.subtotal)}</span>
       </div>
+      <button type="button" className="remove-btn" title="Hapus Item" onClick={removeIt}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
     </div>
   )
 }
@@ -34,49 +40,57 @@ export default function Index() {
 
   return (
     <AppLayout>
-      <Head title="Cart" />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <h1 className="mb-4 text-2xl font-bold text-gray-800">Shopping Cart</h1>
+      <Head title="Keranjang Belanja - Infinity Game" />
 
-        {cart.items.length === 0 ? (
-          <div className="rounded-2xl border p-8 text-center">
-            <p className="text-gray-600">Keranjang kamu masih kosong.</p>
-            <Link href={route('products.index')} className="mt-4 inline-flex rounded-xl bg-gray-900 px-4 py-2 text-white hover:bg-black">Mulai belanja</Link>
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Items */}
-            <div className="md:col-span-2 space-y-3">
-              {cart.items.map(it => <LineItem key={it.product_id} it={it} />)}
+      <main className="cart-page">
+        <div className="cart-container">
+          <h2 className="cart-title">Keranjang Belanja</h2>
+
+          {cart.items.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 0' }}>
+              <p style={{ marginBottom: '1rem', color: '#666' }}>Keranjang kamu masih kosong.</p>
+              <Link href={route('products.index')} className="btn-primary">Mulai Belanja</Link>
             </div>
-
-            {/* Summary */}
-            <aside className="h-fit rounded-2xl border p-4">
-              <h2 className="mb-3 text-lg font-semibold text-gray-800">Summary</h2>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-gray-800"><span>Subtotal</span><span>{fmt(cart.subtotal)}</span></div>
-                <div className="flex justify-between text-gray-800"><span>Shipping</span><span>{fmt(cart.shipping)}</span></div>
-                <hr className="my-2 border-gray-200" />
-                <div className="flex justify-between text-base font-semibold text-gray-800"><span>Total</span><span>{fmt(cart.total)}</span></div>
+          ) : (
+            <div className="cart-layout">
+              <div className="cart-items">
+                {cart.items.map((it) => <CartItem key={it.product_id} it={it} />)}
               </div>
 
-              <button
-                className="mt-4 w-full rounded-xl bg-gray-900 px-4 py-2 text-white hover:bg-black"
-                onClick={() => router.get(route('checkout.create'))}
-              >
-                Checkout
-              </button>
-
-              <button
-                className="mt-2 w-full rounded-xl border px-4 py-2 text-gray-800"
-                onClick={() => router.delete(route('cart.clear'), { preserveScroll: true })}
-              >
-                Clear cart
-              </button>
-            </aside>
-          </div>
-        )}
-      </div>
+              <div className="cart-summary-wrapper">
+                <div className="cart-summary">
+                  <h3>Ringkasan Belanja</h3>
+                  <div className="summary-content">
+                    <div className="summary-row">
+                      <span className="summary-label">Total Produk</span>
+                      <span className="summary-value">{fmt(cart.subtotal)}</span>
+                    </div>
+                    <div className="summary-row">
+                      <span className="summary-label">Biaya Pengiriman</span>
+                      <span className="summary-value">Dihitung saat checkout</span>
+                    </div>
+                    <hr className="summary-divider" />
+                    <div className="summary-row total">
+                      <span className="summary-label">Total Pembayaran</span>
+                      <span className="summary-value-total">{fmt(cart.total)}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn-checkout"
+                    onClick={() => router.get(route('checkout.create'))}
+                  >
+                    Checkout Sekarang
+                  </button>
+                  <Link href={route('products.index')} className="continue-shopping">
+                    &larr; Lanjut Belanja
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
     </AppLayout>
   )
 }

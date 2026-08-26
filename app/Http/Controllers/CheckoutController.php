@@ -336,7 +336,7 @@ class CheckoutController extends Controller
                                 : null,
                 // Tambahkan data ini agar frontend bisa menampilkan instruksi dinamis
                 'channel'      => $payload['Channel'] ?? 'Bank',
-                'payment_name' => $payload['PaymentName'] ?? 'Twighouse',
+                'payment_name' => $payload['PaymentName'] ?? 'Infinity Game',
                 'via'          => $payload['Via'] ?? 'VA',
             ],
         ]);
