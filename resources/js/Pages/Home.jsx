@@ -9,7 +9,7 @@ export default function Index({ sliders, featuredProducts, featuredCategories })
   const hasSliders = sliders && sliders.length > 0;
 
   const defaultHero = {
-    title: "Koleksi Game Dan\nLayanan Terbaik,\nTanpa Batas!",
+    title: "Toko Game Bandung Terpercaya -\nKoleksi Game Dan Layanan Terbaik, Tanpa Batas!",
     button_text: "Belanja Sekarang",
     button_link: "/products",
     image_path: null,
@@ -35,7 +35,12 @@ export default function Index({ sliders, featuredProducts, featuredCategories })
 
   return (
     <AppLayout>
-      <Head title="Koleksi Game Dan Layanan Terbaik, Tanpa Batas!" />
+      <Head title="Infinity Game - Toko Game Bandung | PS5, Nintendo, Xbox & Voucher Game">
+        <meta
+          name="description"
+          content="Infinity Game, toko game Bandung terpercaya sejak lama. Jual PS5, Nintendo Switch, Xbox, voucher game, dan aksesoris original dengan harga terbaik dan garansi resmi."
+        />
+      </Head>
 
       <section className="hero">
         <div className="hero-content">
@@ -47,6 +52,9 @@ export default function Index({ sliders, featuredProducts, featuredCategories })
               </React.Fragment>
             ))}
           </h1>
+          <p className="hero-subtitle">
+            Toko game Bandung terpercaya — konsol, game, voucher, dan aksesoris original untuk PlayStation, Nintendo, dan Xbox.
+          </p>
           <Link
             href={activeSlide.button_link || "/products"}
             className="btn-primary"
@@ -57,7 +65,7 @@ export default function Index({ sliders, featuredProducts, featuredCategories })
         <div className="hero-image">
           <img
             src={activeSlide.image_path ? `/storage/${activeSlide.image_path}` : "/images/hero_image.png"}
-            alt="Hero Mockup"
+            alt="Toko Game Bandung - Infinity Game"
           />
         </div>
       </section>
