@@ -62,6 +62,21 @@ export default function Footer() {
         </div>
       </div>
 
+      <div className="footer-contact-bar">
+        <address>
+          <strong>Infinity Game</strong> — Toko Game Bandung, Jl. Purnawarman No.13-15 L2 – B07, Babakan Ciamis, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40117
+        </address>
+        <span className="footer-contact-sep" aria-hidden="true">•</span>
+        <span>
+          <strong>Telp/WA:</strong>{' '}
+          <a href="https://wa.me/6281123456789" target="_blank" rel="noreferrer">+62 811-2345-6789</a>
+        </span>
+        <span className="footer-contact-sep" aria-hidden="true">•</span>
+        <span><strong>Email:</strong> support@infinitygame.id</span>
+        <span className="footer-contact-sep" aria-hidden="true">•</span>
+        <span><strong>Jam Buka:</strong> Setiap Hari, 10:00 - 22:00 WIB</span>
+      </div>
+
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} Infinity Game. All rights reserved.</p>
       </div>
